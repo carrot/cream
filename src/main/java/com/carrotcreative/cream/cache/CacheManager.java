@@ -131,7 +131,8 @@ public class CacheManager {
 
     private static File[] getMatchingFiles(File root, String regex) {
         if(!root.isDirectory()) {
-            throw new IllegalArgumentException(root+" is no directory.");
+            root.mkdir();
+            return new File[0];
         }
         final Pattern p = Pattern.compile(regex); // careful: could also throw an exception!
         return root.listFiles(new FileFilter(){
