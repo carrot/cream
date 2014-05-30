@@ -1,64 +1,81 @@
 package com.carrotcreative.cream.loaders.single;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import com.carrotcreative.cream.cache.CacheManager;
+import com.carrotcreative.cream.strategies.CacheStrategy;
+import com.carrotcreative.cream.strategies.CacheStrategyCallback;
 import com.carrotcreative.cream.tasks.ReadSerializableTask;
 import com.carrotcreative.cream.tasks.WriteSerializableTask;
 
 import java.io.Serializable;
 
-/**
- * Caching Strategy
- *  -> Cache files when they are loaded from the API
- *  -> Flag each type of file with a specific expiration, getExpirationMinutes() away
- *  -> When the expiration date hits, we'll try to pull from the API again
- *  -> if we have network availability
- *          -> Hit the API
- *          -> If that somehow ended up failing
- *              -> Hit the cache with no regard to expiration
- *     else
- *          ->Hit the cache with no regard to expiration
- *
- *  -> Cache will be cleaned up after the file is TRASH_DAYS past expiration
- *     to prevent the cache from filling up too much.
- *
- *  -> Expired files will also be replaced in the event there is a successful
- *     API call to the same file.
- */
 public abstract class SerializableSingleLoader<T> {
 
     protected Context mContext;
+    protected CacheStrategy<T> mCacheStrategy;
 
-    public SerializableSingleLoader(Context context)
+    public SerializableSingleLoader(Context context, CacheStrategy<T> cacheStrategy)
     {
         mContext = context;
+        mCacheStrategy = cacheStrategy;
     }
 
     public void loadSelf(final T identifier, final SingleCacheCallback callback){
-        if(shouldCache(identifier))
-        {
-            loadFromCache(identifier, true, callback);
-        }
-        else
-        {
-            loadFromAPI(identifier, callback);
-        }
+        handleInitialLoad(identifier, callback);
+    }
+
+    protected void handleInitialLoad(final T identifier, final SingleCacheCallback callback)
+    {
+        mCacheStrategy.handleInitialLoad(identifier, shouldCache(identifier), new CacheStrategyCallback() {
+            @Override
+            public void handleFromCache() {
+                loadFromCache(identifier, true, callback);
+            }
+
+            @Override
+            public void handleFromAPI() {
+                loadFromAPI(identifier, callback);
+            }
+
+            @Override
+            public void handleError(Exception error) {
+                callback.failure(error);
+            }
+        });
+    }
+
+    protected void handleCacheFailure(final T identifier, final boolean hasExpirationRegard, final SingleCacheCallback singleCacheCallback, Exception error)
+    {
+        mCacheStrategy.handleCacheFailure(identifier, hasExpirationRegard, error, new CacheStrategyCallback() {
+            @Override
+            public void handleFromCache() {
+                loadFromCache(identifier, false, singleCacheCallback);
+            }
+
+            @Override
+            public void handleFromAPI() {
+                loadFromAPI(identifier, singleCacheCallback);
+            }
+
+            @Override
+            public void handleError(Exception error) {
+                singleCacheCallback.failure(error);
+            }
+        });
     }
 
     //======== Abstract
 
-    public abstract String getDirectory();
+    protected abstract String getDirectory();
 
-    public abstract String getFileExtension();
+    protected abstract String getFileExtension();
 
-    public abstract long getExpirationMinutes();
+    protected abstract long getExpirationMinutes();
 
-    public abstract long getTrashMinutes();
+    protected abstract long getTrashMinutes();
 
-    public abstract boolean shouldCache(T identifier);
+    protected abstract boolean shouldCache(T identifier);
 
     protected abstract void loadFromAPI(T identifier, SingleCacheCallback cb);
 
@@ -80,15 +97,7 @@ public abstract class SerializableSingleLoader<T> {
 
                     @Override
                     public void failure(Exception error) {
-                        //Try again if we had regard for cache before
-                        if (hasExpirationRegard) {
-                            if (thisLoader.isOnline())
-                                loadFromAPI(identifier, singleCacheCallback);
-                            else
-                                loadFromCache(identifier, false, singleCacheCallback);
-                        } else {
-                            singleCacheCallback.failure(error);
-                        }
+                        handleCacheFailure(identifier, hasExpirationRegard, singleCacheCallback, error);
                     }
                 }
         );
@@ -137,21 +146,6 @@ public abstract class SerializableSingleLoader<T> {
     public void runCleanup()
     {
         CacheManager.getInstance(mContext).runTrashCleanup(getDirectory(), getFileExtension(), getTrashMinutes());
-    }
-
-    //======== Helper
-
-    /**
-     * Returns true if we have internet connectivity, false otherwise
-     */
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-            return true;
-        }
-        return false;
     }
 
 }
