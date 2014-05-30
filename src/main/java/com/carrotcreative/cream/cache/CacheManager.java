@@ -93,10 +93,10 @@ public class CacheManager {
 
     /**
      * This goes and deletes files that are expired by trashDays
-     * //TODO don't forget to run this somewhere
      */
-    public void runTrashCleanup(File cleanupDir, String fileExtension, long trashMinutes)
+    public void runTrashCleanup(String directoryString, String fileExtension, long trashMinutes)
     {
+        File cleanupDir = new File(mRootDir, directoryString);
         File[] allFiles = cleanupDir.listFiles();
         for(File f : allFiles)
         {
