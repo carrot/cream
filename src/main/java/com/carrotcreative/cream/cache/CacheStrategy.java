@@ -1,6 +1,4 @@
-package com.carrotcreative.cream.strategies;
-
-import com.carrotcreative.cream.loaders.single.SingleCacheCallback;
+package com.carrotcreative.cream.cache;
 
 public interface CacheStrategy<T> {
 

@@ -3,8 +3,8 @@ package com.carrotcreative.cream.loaders.single;
 import android.content.Context;
 
 import com.carrotcreative.cream.cache.CacheManager;
-import com.carrotcreative.cream.strategies.CacheStrategy;
-import com.carrotcreative.cream.strategies.CacheStrategyCallback;
+import com.carrotcreative.cream.cache.CacheStrategy;
+import com.carrotcreative.cream.cache.CacheStrategyCallback;
 import com.carrotcreative.cream.tasks.ReadSerializableTask;
 import com.carrotcreative.cream.tasks.WriteSerializableTask;
 

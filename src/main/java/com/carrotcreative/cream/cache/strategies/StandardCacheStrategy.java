@@ -1,11 +1,13 @@
-package com.carrotcreative.cream.strategies;
+package com.carrotcreative.cream.cache.strategies;
 
 import android.content.Context;
 
+import com.carrotcreative.cream.cache.CacheStrategy;
+import com.carrotcreative.cream.cache.CacheStrategyCallback;
 import com.carrotcreative.cream.util.InternetStatus;
 
 /* TODO add description */
-public class StandardCacheStrategy<T> implements CacheStrategy<T>{
+public class StandardCacheStrategy<T> implements CacheStrategy<T> {
 
     private Context mContext;
 
