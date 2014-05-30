@@ -1,4 +1,4 @@
-package com.carrotcreative.cream.loaders;
+package com.carrotcreative.cream.loaders.single;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -10,16 +10,34 @@ import com.carrotcreative.cream.tasks.WriteSerializableTask;
 
 import java.io.Serializable;
 
-public abstract class SerializableCacheLoader<T> {
+/**
+ * Caching Strategy
+ *  -> Cache files when they are loaded from the API
+ *  -> Flag each type of file with a specific expiration, getExpirationMinutes() away
+ *  -> When the expiration date hits, we'll try to pull from the API again
+ *  -> if we have network availability
+ *          -> Hit the API
+ *          -> If that somehow ended up failing
+ *              -> Hit the cache with no regard to expiration
+ *     else
+ *          ->Hit the cache with no regard to expiration
+ *
+ *  -> Cache will be cleaned up after the file is TRASH_DAYS past expiration
+ *     to prevent the cache from filling up too much.
+ *
+ *  -> Expired files will also be replaced in the event there is a successful
+ *     API call to the same file.
+ */
+public abstract class SerializableSingleLoader<T> {
 
     protected Context mContext;
 
-    public SerializableCacheLoader(Context context)
+    public SerializableSingleLoader(Context context)
     {
         mContext = context;
     }
 
-    public void loadSelf(final T identifier, final StandardIDCallback callback){
+    public void loadSelf(final T identifier, final SingleCacheCallback callback){
         if(shouldCache(identifier))
         {
             loadFromCache(identifier, true, callback);
@@ -42,22 +60,22 @@ public abstract class SerializableCacheLoader<T> {
 
     public abstract boolean shouldCache(T identifier);
 
-    protected abstract void loadFromAPI(T identifier, StandardIDCallback cb);
+    protected abstract void loadFromAPI(T identifier, SingleCacheCallback cb);
 
     protected abstract String getPrefix(T identifier);
 
     //======= Read
 
-    protected void loadFromCache(final T identifier, final boolean hasExpirationRegard, final StandardIDCallback standardIDCallback)
+    protected void loadFromCache(final T identifier, final boolean hasExpirationRegard, final SingleCacheCallback singleCacheCallback)
     {
         final String prefix = getPrefix(identifier);
-        final SerializableCacheLoader thisLoader = this;
+        final SerializableSingleLoader thisLoader = this;
 
         CacheManager.getInstance(mContext).readSerializable(getDirectory(), getFileExtension(), prefix, hasExpirationRegard,
                 new ReadSerializableTask.ReadSerializableCallback() {
                     @Override
                     public void success(Serializable object) {
-                        standardIDCallback.success(object, true);
+                        singleCacheCallback.success(object, true);
                     }
 
                     @Override
@@ -65,11 +83,11 @@ public abstract class SerializableCacheLoader<T> {
                         //Try again if we had regard for cache before
                         if (hasExpirationRegard) {
                             if (thisLoader.isOnline())
-                                loadFromAPI(identifier, standardIDCallback);
+                                loadFromAPI(identifier, singleCacheCallback);
                             else
-                                loadFromCache(identifier, false, standardIDCallback);
+                                loadFromCache(identifier, false, singleCacheCallback);
                         } else {
-                            standardIDCallback.failure(error);
+                            singleCacheCallback.failure(error);
                         }
                     }
                 }
@@ -80,7 +98,7 @@ public abstract class SerializableCacheLoader<T> {
 
     /**
      * This can be overwritten in a subclass if you feel
-     * 3 isn't the right number for you
+     * 3 isn't the right number
      */
     protected int mWriteAttempts = 3;
 
@@ -134,13 +152,6 @@ public abstract class SerializableCacheLoader<T> {
             return true;
         }
         return false;
-    }
-
-    //======== Callback
-
-    public interface StandardIDCallback {
-        void success(Serializable content, boolean fromCache);
-        void failure(Exception error);
     }
 
 }
