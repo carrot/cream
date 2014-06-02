@@ -3,8 +3,8 @@ package com.carrotcreative.cream.loaders.single;
 import android.content.Context;
 
 import com.carrotcreative.cream.cache.CacheManager;
-import com.carrotcreative.cream.cache.CacheStrategy;
-import com.carrotcreative.cream.cache.CacheStrategyCallback;
+import com.carrotcreative.cream.strategies.CacheStrategy;
+import com.carrotcreative.cream.strategies.CacheStrategyCallback;
 import com.carrotcreative.cream.tasks.ReadSerializableTask;
 import com.carrotcreative.cream.tasks.WriteSerializableTask;
 
@@ -35,7 +35,7 @@ public abstract class SerializableSingleLoader<T> {
 
             @Override
             public void handleFromAPI() {
-                loadFromAPI(identifier, callback);
+                loadFromSource(identifier, callback);
             }
 
             @Override
@@ -55,7 +55,7 @@ public abstract class SerializableSingleLoader<T> {
 
             @Override
             public void handleFromAPI() {
-                loadFromAPI(identifier, singleCacheCallback);
+                loadFromSource(identifier, singleCacheCallback);
             }
 
             @Override
@@ -77,7 +77,7 @@ public abstract class SerializableSingleLoader<T> {
 
     protected abstract boolean shouldCache(T identifier);
 
-    protected abstract void loadFromAPI(T identifier, SingleCacheCallback cb);
+    protected abstract void loadFromSource(T identifier, SingleCacheCallback cb);
 
     protected abstract String getPrefix(T identifier);
 
