@@ -22,7 +22,7 @@ public abstract class RetryLoader {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                load();
+                loadSelf();
                 updateRetrySeconds();
             }
         }, mRetrySeconds * 1000);
@@ -34,6 +34,6 @@ public abstract class RetryLoader {
                 (int) (mRetrySeconds * RETRY_SECONDS_GROWTH_RATE));
     }
 
-    public abstract void load();
+    public abstract void loadSelf();
 
 }

@@ -20,7 +20,7 @@ public class RetrySingleLoader<Identifier> extends RetryLoader implements Single
     }
 
     @Override
-    public void load()
+    public void loadSelf()
     {
         mLoader.loadSelf(mIdentifier, this);
     }

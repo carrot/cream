@@ -23,7 +23,7 @@ public class RetryMultipleLoader<Identifier> extends RetryLoader implements Mult
         mRetryMultipleLoaderCallback = callback;
     }
 
-    public void load()
+    public void loadSelf()
     {
         mMultiLoader.load(mIds, mSingleLoader, this);
     }
