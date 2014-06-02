@@ -10,22 +10,22 @@ import com.carrotcreative.cream.tasks.WriteSerializableTask;
 
 import java.io.Serializable;
 
-public abstract class SerializableSingleLoader<T> {
+public abstract class SingleLoader<T> {
 
     protected Context mContext;
     protected CacheStrategy<T> mCacheStrategy;
 
-    public SerializableSingleLoader(Context context, CacheStrategy<T> cacheStrategy)
+    public SingleLoader(Context context, CacheStrategy<T> cacheStrategy)
     {
         mContext = context;
         mCacheStrategy = cacheStrategy;
     }
 
-    public void loadSelf(final T identifier, final SingleCacheCallback callback){
+    public void loadSelf(final T identifier, final SingleLoaderCallback callback){
         handleInitialLoad(identifier, callback);
     }
 
-    protected void handleInitialLoad(final T identifier, final SingleCacheCallback callback)
+    protected void handleInitialLoad(final T identifier, final SingleLoaderCallback callback)
     {
         mCacheStrategy.handleInitialLoad(identifier, shouldCache(identifier), new CacheStrategyCallback() {
             @Override
@@ -45,22 +45,22 @@ public abstract class SerializableSingleLoader<T> {
         });
     }
 
-    protected void handleCacheFailure(final T identifier, final boolean hasExpirationRegard, final SingleCacheCallback singleCacheCallback, Exception error)
+    protected void handleCacheFailure(final T identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback, Exception error)
     {
         mCacheStrategy.handleCacheFailure(identifier, hasExpirationRegard, error, new CacheStrategyCallback() {
             @Override
             public void handleFromCache() {
-                loadFromCache(identifier, false, singleCacheCallback);
+                loadFromCache(identifier, false, singleLoaderCallback);
             }
 
             @Override
             public void handleFromAPI() {
-                loadFromSource(identifier, singleCacheCallback);
+                loadFromSource(identifier, singleLoaderCallback);
             }
 
             @Override
             public void handleError(Exception error) {
-                singleCacheCallback.failure(error);
+                singleLoaderCallback.failure(error);
             }
         });
     }
@@ -77,27 +77,27 @@ public abstract class SerializableSingleLoader<T> {
 
     protected abstract boolean shouldCache(T identifier);
 
-    protected abstract void loadFromSource(T identifier, SingleCacheCallback cb);
+    protected abstract void loadFromSource(T identifier, SingleLoaderCallback cb);
 
     protected abstract String getPrefix(T identifier);
 
     //======= Read
 
-    protected void loadFromCache(final T identifier, final boolean hasExpirationRegard, final SingleCacheCallback singleCacheCallback)
+    protected void loadFromCache(final T identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback)
     {
         final String prefix = getPrefix(identifier);
-        final SerializableSingleLoader thisLoader = this;
+        final SingleLoader thisLoader = this;
 
         CacheManager.getInstance(mContext).readSerializable(getDirectory(), getFileExtension(), prefix, hasExpirationRegard,
                 new ReadSerializableTask.ReadSerializableCallback() {
                     @Override
                     public void success(Serializable object) {
-                        singleCacheCallback.success(object, true);
+                        singleLoaderCallback.success(object, true);
                     }
 
                     @Override
                     public void failure(Exception error) {
-                        handleCacheFailure(identifier, hasExpirationRegard, singleCacheCallback, error);
+                        handleCacheFailure(identifier, hasExpirationRegard, singleLoaderCallback, error);
                     }
                 }
         );

@@ -1,13 +1,13 @@
 package com.carrotcreative.cream.loaders.multiple;
 
-import com.carrotcreative.cream.loaders.single.SerializableSingleLoader;
-import com.carrotcreative.cream.loaders.single.SingleCacheCallback;
+import com.carrotcreative.cream.loaders.single.SingleLoader;
+import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
 import com.carrotcreative.cream.util.IncrementalInteger;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SerializableMultipleLoader<Identifier> {
+public class MultipleLoader<Identifier> {
 
     /** This policy requires everything to be downloaded, or else it fails */
     public static final int STRICT_POLICY = 1;
@@ -24,17 +24,17 @@ public class SerializableMultipleLoader<Identifier> {
     private int mTotalToLoad;
 
 
-    public SerializableMultipleLoader(int downloadPolicy) {
+    public MultipleLoader(int downloadPolicy) {
         mDownloadPolicy = downloadPolicy;
     }
 
-    public void load(final ArrayList<Identifier> ids, SerializableSingleLoader<Identifier> loader, final MultipleCacheCallback multipleCallback) {
+    public void load(final ArrayList<Identifier> ids, SingleLoader<Identifier> loader, final MultipleLoaderCallback multipleCallback) {
         mLoaderTuples = new ArrayList<MultipleLoaderTuple>();
         mFinishedCounter = new IncrementalInteger(0);
         mTotalToLoad = ids.size();
 
         for (final Identifier id : ids) {
-            loader.loadSelf(id, new SingleCacheCallback() {
+            loader.loadSelf(id, new SingleLoaderCallback() {
 
                 @Override
                 public void success(Serializable content, boolean fromCache) {
@@ -53,7 +53,7 @@ public class SerializableMultipleLoader<Identifier> {
         }
     }
 
-    private void checkFinished(MultipleCacheCallback callback)
+    private void checkFinished(MultipleLoaderCallback callback)
     {
         //Increment the counter, something just finished
         mFinishedCounter.increment();
@@ -70,7 +70,7 @@ public class SerializableMultipleLoader<Identifier> {
         }
     }
 
-    private void checkRelaxed(MultipleCacheCallback callback)
+    private void checkRelaxed(MultipleLoaderCallback callback)
     {
         //If we're finished
         if(mFinishedCounter.value() >= mTotalToLoad)
@@ -86,7 +86,7 @@ public class SerializableMultipleLoader<Identifier> {
         }
     }
 
-    private void checkStrict(MultipleCacheCallback callback)
+    private void checkStrict(MultipleLoaderCallback callback)
     {
         if(mFinishedCounter.value() >= mTotalToLoad)
         {

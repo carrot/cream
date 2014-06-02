@@ -1,20 +1,21 @@
-package com.carrotcreative.cream.loaders.retry;
+package com.carrotcreative.cream.loaders.retry.multiple;
 
-import com.carrotcreative.cream.loaders.multiple.MultipleCacheCallback;
+import com.carrotcreative.cream.loaders.multiple.MultipleLoaderCallback;
 import com.carrotcreative.cream.loaders.multiple.MultipleLoaderTuple;
-import com.carrotcreative.cream.loaders.multiple.SerializableMultipleLoader;
-import com.carrotcreative.cream.loaders.single.SerializableSingleLoader;
+import com.carrotcreative.cream.loaders.multiple.MultipleLoader;
+import com.carrotcreative.cream.loaders.retry.RetryLoader;
+import com.carrotcreative.cream.loaders.single.SingleLoader;
 
 import java.util.ArrayList;
 
-public class RetryMultipleLoader<Identifier> extends RetryLoader implements MultipleCacheCallback{
+public class RetryMultipleLoader<Identifier> extends RetryLoader implements MultipleLoaderCallback {
 
     private RetryMultipleLoaderCallback mRetryMultipleLoaderCallback;
-    private final SerializableMultipleLoader<Identifier> mMultiLoader;
-    private final SerializableSingleLoader<Identifier> mSingleLoader;
+    private final MultipleLoader<Identifier> mMultiLoader;
+    private final SingleLoader<Identifier> mSingleLoader;
     private final ArrayList<Identifier> mIds;
 
-    public RetryMultipleLoader(SerializableMultipleLoader<Identifier> multiLoader, SerializableSingleLoader<Identifier> singleLoader, final ArrayList<Identifier> ids, RetryMultipleLoaderCallback callback)
+    public RetryMultipleLoader(MultipleLoader<Identifier> multiLoader, SingleLoader<Identifier> singleLoader, final ArrayList<Identifier> ids, RetryMultipleLoaderCallback callback)
     {
         super();
         mMultiLoader = multiLoader;

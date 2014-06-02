@@ -1,17 +1,18 @@
-package com.carrotcreative.cream.loaders.retry;
+package com.carrotcreative.cream.loaders.retry.single;
 
-import com.carrotcreative.cream.loaders.single.SerializableSingleLoader;
-import com.carrotcreative.cream.loaders.single.SingleCacheCallback;
+import com.carrotcreative.cream.loaders.retry.RetryLoader;
+import com.carrotcreative.cream.loaders.single.SingleLoader;
+import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
 
 import java.io.Serializable;
 
-public class RetrySingleLoader<Identifier> extends RetryLoader implements SingleCacheCallback{
+public class RetrySingleLoader<Identifier> extends RetryLoader implements SingleLoaderCallback {
 
     private RetrySingleLoaderCallback mRetrySingleLoaderCallback;
-    private final SerializableSingleLoader<Identifier> mLoader;
+    private final SingleLoader<Identifier> mLoader;
     private final Identifier mIdentifier;
 
-    public RetrySingleLoader(SerializableSingleLoader<Identifier> loader, final Identifier identifier, RetrySingleLoaderCallback callback)
+    public RetrySingleLoader(SingleLoader<Identifier> loader, final Identifier identifier, RetrySingleLoaderCallback callback)
     {
         super();
         mLoader = loader;
