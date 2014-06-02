@@ -1,9 +1,7 @@
-package com.carrotcreative.cream.cache.strategies;
+package com.carrotcreative.cream.strategies;
 
 import android.content.Context;
 
-import com.carrotcreative.cream.cache.CacheStrategy;
-import com.carrotcreative.cream.cache.CacheStrategyCallback;
 import com.carrotcreative.cream.util.InternetStatus;
 
 /**
