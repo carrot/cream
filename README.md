@@ -126,6 +126,10 @@ loader.loadSelf(userName, new SingleLoaderCallback() {
 });
 ```
 
+### Too verbose?
+
+You'll most likely find that your application has some type of caching default, so feel free to extend the SingleLoader class to implement some of the methods as defaults and override them as needed.
+
 ### Other Features
 
 - Multiple Loaders 
