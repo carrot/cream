@@ -133,4 +133,6 @@ loader.loadSelf(userName, new SingleLoaderCallback() {
 - Repeat Loaders
   * Allows you to keep trying the API until you decide to stop. 
 
+### Example
+
 The example goes over most of the features, and would be the best way to get started, so check it out [here](https://github.com/carrot/CREAM-example).
