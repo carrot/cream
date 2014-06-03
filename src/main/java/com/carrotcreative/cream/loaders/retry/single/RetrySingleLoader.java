@@ -10,19 +10,23 @@ public class RetrySingleLoader<Identifier> extends RetryLoader implements Single
 
     private RetrySingleLoaderCallback mRetrySingleLoaderCallback;
     private final SingleLoader<Identifier> mLoader;
-    private final Identifier mIdentifier;
+    private Identifier mIdentifier;
 
-    public RetrySingleLoader(SingleLoader<Identifier> loader, final Identifier identifier, RetrySingleLoaderCallback callback)
+    public RetrySingleLoader(SingleLoader<Identifier> loader)
     {
         super();
         mLoader = loader;
+    }
+
+    public void loadSelf(final Identifier identifier, RetrySingleLoaderCallback callback)
+    {
         mIdentifier = identifier;
         mRetrySingleLoaderCallback = callback;
+        mLoader.loadSelf(mIdentifier, this);
     }
 
     @Override
-    public void loadSelf()
-    {
+    public void retryLoad() {
         mLoader.loadSelf(mIdentifier, this);
     }
 

@@ -13,19 +13,19 @@ public class RetryMultipleLoader<Identifier> extends RetryLoader implements Mult
     private RetryMultipleLoaderCallback mRetryMultipleLoaderCallback;
     private final MultipleLoader<Identifier> mMultiLoader;
     private final SingleLoader<Identifier> mSingleLoader;
-    private final ArrayList<Identifier> mIds;
+    private ArrayList<Identifier> mIds;
 
-    public RetryMultipleLoader(MultipleLoader<Identifier> multiLoader, SingleLoader<Identifier> singleLoader, final ArrayList<Identifier> ids, RetryMultipleLoaderCallback callback)
+    public RetryMultipleLoader(MultipleLoader<Identifier> multiLoader, SingleLoader<Identifier> singleLoader)
     {
         super();
         mMultiLoader = multiLoader;
         mSingleLoader = singleLoader;
-        mIds = ids;
-        mRetryMultipleLoaderCallback = callback;
     }
 
-    public void loadSelf()
+    public void loadSelf(final ArrayList<Identifier> ids, RetryMultipleLoaderCallback callback)
     {
+        mIds = ids;
+        mRetryMultipleLoaderCallback = callback;
         mMultiLoader.load(mIds, mSingleLoader, this);
     }
 
@@ -38,6 +38,11 @@ public class RetryMultipleLoader<Identifier> extends RetryLoader implements Mult
     public void failure(Exception error) {
         mAttemptNumber++;
         mRetryMultipleLoaderCallback.failedAttempt(mAttemptNumber);
+    }
+
+    @Override
+    public void retryLoad() {
+        mMultiLoader.load(mIds, mSingleLoader, this);
     }
 
 }
