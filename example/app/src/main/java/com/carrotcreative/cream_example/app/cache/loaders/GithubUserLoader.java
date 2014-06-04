@@ -82,6 +82,7 @@ public class GithubUserLoader extends SingleLoader<String> {
             public void success(GithubUser githubUser, Response response) {
                 writeContent(user, githubUser);
                 singleLoaderCallback.success(githubUser, false); //False -- Not from Cache
+                singleLoaderCallback.always();
             }
 
             @Override
@@ -89,7 +90,10 @@ public class GithubUserLoader extends SingleLoader<String> {
                 if(shouldCache(user))
                     loadFromCache(user, false, singleLoaderCallback);
                 else
+                {
                     singleLoaderCallback.failure(error);
+                    singleLoaderCallback.always();
+                }
             }
         });
     }

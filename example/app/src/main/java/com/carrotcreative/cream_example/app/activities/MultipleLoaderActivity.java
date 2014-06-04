@@ -76,16 +76,16 @@ public class MultipleLoaderActivity extends Activity implements MultipleLoaderCa
         // Displaying success, you can handle the tuples however you would like
         // Inside this tuple, mContent is the serializable object defined in the loader.
         DisplayManager.displayMultipleSuccess(loaderTuples, this);
-
-        //Unlock the submit button
-        mSubmitLock = false;
     }
 
     @Override
     public void failure(Exception e) {
         //Failure, handle this however you would like
         DisplayManager.displayFailure(this);
+    }
 
+    @Override
+    public void always() {
         //Unlock the submit button
         mSubmitLock = false;
     }

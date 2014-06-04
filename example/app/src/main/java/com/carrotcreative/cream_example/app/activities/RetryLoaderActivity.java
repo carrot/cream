@@ -88,4 +88,9 @@ public class RetryLoaderActivity extends Activity implements RetrySingleLoaderCa
         //Continue to retry -- You can add specific constraints
         mRetryLoader.retry();
     }
+
+    @Override
+    public void always() {
+        /* Do nothing */
+    }
 }
