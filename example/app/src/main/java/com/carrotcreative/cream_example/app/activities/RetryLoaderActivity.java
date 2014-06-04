@@ -93,4 +93,5 @@ public class RetryLoaderActivity extends Activity implements RetrySingleLoaderCa
     public void always() {
         /* Do nothing */
     }
+
 }
