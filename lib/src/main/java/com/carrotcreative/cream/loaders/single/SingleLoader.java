@@ -41,6 +41,7 @@ public abstract class SingleLoader<T> {
             @Override
             public void handleError(Exception error) {
                 callback.failure(error);
+                callback.always();
             }
         });
     }
@@ -61,6 +62,7 @@ public abstract class SingleLoader<T> {
             @Override
             public void handleError(Exception error) {
                 singleLoaderCallback.failure(error);
+                singleLoaderCallback.always();
             }
         });
     }
