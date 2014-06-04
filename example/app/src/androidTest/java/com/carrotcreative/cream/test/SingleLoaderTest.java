@@ -44,7 +44,7 @@ public class SingleLoaderTest extends InstrumentationTestCase {
         // Creating the loader
         final GithubUserLoader loader = new GithubUserLoader(getInstrumentation().getContext(), cacheStrategy);
 
-        // Execute the async task on the UI thread! THIS IS KEY!
+        // Execute the async task on the UI thread
         runTestOnUiThread(new Runnable() {
             @Override
             public void run() {
