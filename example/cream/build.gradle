@@ -18,6 +18,25 @@ android {
     }
 }
 
+android {
+    lintOptions {
+        abortOnError false
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
+
+task clearJar(type: Delete) {
+    delete 'build/libs/cream-0.0.2.jar'
+}
+
+task makeJar(type: Copy) {
+    from('build/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename ('classes.jar', 'cream-0.0.2.jar')
+}
+
+makeJar.dependsOn(clearJar, build)
