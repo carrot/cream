@@ -34,6 +34,6 @@ public abstract class RetryLoader {
                 (int) (mRetrySeconds * RETRY_SECONDS_GROWTH_RATE));
     }
 
-    public abstract void retryLoad();
+    protected abstract void retryLoad();
 
 }
