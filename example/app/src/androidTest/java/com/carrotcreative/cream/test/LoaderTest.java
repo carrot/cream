@@ -26,11 +26,8 @@ public class LoaderTest extends InstrumentationTestCase {
 
     private static final int TIMEOUT = 15;
     private static final int RETRY_ATTEMPTS = 5;
-
     private static final String sGithubUserName = "BrandonRomano";
     private ArrayList<String> mGithubUserNames;
-
-
 
     public LoaderTest()
     {
