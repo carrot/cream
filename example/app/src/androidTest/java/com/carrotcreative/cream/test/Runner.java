@@ -9,8 +9,8 @@ public class Runner extends InstrumentationTestRunner {
     @Override
     public TestSuite getAllTests(){
         InstrumentationTestSuite suite = new InstrumentationTestSuite(this);
-        suite.addTestSuite(SingleTest.class);
-        suite.addTest(new SingleTest("Single Test"));
+        suite.addTestSuite(SingleLoaderTest.class);
+        suite.addTest(new SingleLoaderTest());
         return suite;
     }
 

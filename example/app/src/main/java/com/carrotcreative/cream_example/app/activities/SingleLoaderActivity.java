@@ -69,16 +69,16 @@ public class SingleLoaderActivity extends Activity implements SingleLoaderCallba
 
         //Do whatever you want with it... Here we just display
         DisplayManager.displaySuccess(user, fromCache, mThisActivity);
-
-        //Unlock the submit button
-        mSubmitLock = false;
     }
 
     @Override
     public void failure(Exception e) {
         //Failure, handle this however you would like
         DisplayManager.displayFailure(mThisActivity);
+    }
 
+    @Override
+    public void always() {
         //Unlock the submit button
         mSubmitLock = false;
     }
