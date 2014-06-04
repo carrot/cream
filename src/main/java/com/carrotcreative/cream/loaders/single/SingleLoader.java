@@ -99,6 +99,11 @@ public abstract class SingleLoader<T> {
                     public void failure(Exception error) {
                         handleCacheFailure(identifier, hasExpirationRegard, singleLoaderCallback, error);
                     }
+
+                    @Override
+                    public void always() {
+                        singleLoaderCallback.always();
+                    }
                 }
         );
     }
@@ -133,6 +138,9 @@ public abstract class SingleLoader<T> {
                     public void failure(Exception error) {
                         writeContentRecursive(attemptsRemaining - 1, identifier, content);
                     }
+
+                    @Override
+                    public void always() { /* Do nothing */}
                 }
             );
         }
