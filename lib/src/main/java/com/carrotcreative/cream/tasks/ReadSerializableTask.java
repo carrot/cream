@@ -48,9 +48,16 @@ public class ReadSerializableTask extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
+    protected void onPostExecute(Void value)
+    {
+        super.onPostExecute(value);
+        mCallback.always();
+    }
+
     public interface ReadSerializableCallback {
         void success(Serializable object);
         void failure(Exception error);
+        void always();
     }
 
 }

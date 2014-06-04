@@ -53,9 +53,16 @@ public class WriteSerializableTask extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
+    protected void onPostExecute(Void value)
+    {
+        super.onPostExecute(value);
+        mCallback.always();
+    }
+
     public interface WriteSerializableCallback {
         void success();
         void failure(Exception error);
+        void always();
     }
 
 }
