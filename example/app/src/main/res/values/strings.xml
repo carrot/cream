@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">cream-example</string>
+
+    <!-- Home -->
+    <string name="single_loader_example">Single Loader Example</string>
+    <string name="multiple_loader_example">Multiple Loader Example</string>
+    <string name="retry_loader_example">Retry Loader Example</string>
+
+    <!-- Single + Multiple -->
+    <string name="github_user_name">Github User Name</string>
+    <string name="github_user_names">Github User Names</string>
+    <string name="submit">Submit</string>
+
+</resources>
