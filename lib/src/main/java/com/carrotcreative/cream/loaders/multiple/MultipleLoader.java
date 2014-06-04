@@ -2,10 +2,10 @@ package com.carrotcreative.cream.loaders.multiple;
 
 import com.carrotcreative.cream.loaders.single.SingleLoader;
 import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
-import com.carrotcreative.cream.util.IncrementalInteger;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MultipleLoader<Identifier> {
 
@@ -19,7 +19,7 @@ public class MultipleLoader<Identifier> {
     //===================================
 
     private ArrayList<MultipleLoaderTuple> mLoaderTuples;
-    private IncrementalInteger mFinishedCounter;
+    private AtomicInteger mFinishedCounter;
     private final int mDownloadPolicy;
     private int mTotalToLoad;
 
@@ -30,7 +30,7 @@ public class MultipleLoader<Identifier> {
 
     public void load(final ArrayList<Identifier> ids, SingleLoader<Identifier> loader, final MultipleLoaderCallback multipleCallback) {
         mLoaderTuples = new ArrayList<MultipleLoaderTuple>();
-        mFinishedCounter = new IncrementalInteger(0);
+        mFinishedCounter = new AtomicInteger(0);
         mTotalToLoad = ids.size();
 
         for (final Identifier id : ids) {
@@ -49,6 +49,10 @@ public class MultipleLoader<Identifier> {
 
                     checkFinished(multipleCallback);
                 }
+
+                @Override
+                public void always() { /* Do nothing */ }
+
             });
         }
     }
@@ -56,7 +60,7 @@ public class MultipleLoader<Identifier> {
     private void checkFinished(MultipleLoaderCallback callback)
     {
         //Increment the counter, something just finished
-        mFinishedCounter.increment();
+        mFinishedCounter.incrementAndGet();
 
         switch(mDownloadPolicy)
         {
@@ -73,7 +77,7 @@ public class MultipleLoader<Identifier> {
     private void checkRelaxed(MultipleLoaderCallback callback)
     {
         //If we're finished
-        if(mFinishedCounter.value() >= mTotalToLoad)
+        if(mFinishedCounter.get() >= mTotalToLoad)
         {
             if(mLoaderTuples.size() != 0) //We have some: success
             {
@@ -83,12 +87,14 @@ public class MultipleLoader<Identifier> {
             {
                 callback.failure(new Exception("Failed to download using RELAXED_POLICY"));
             }
+
+            callback.always();
         }
     }
 
     private void checkStrict(MultipleLoaderCallback callback)
     {
-        if(mFinishedCounter.value() >= mTotalToLoad)
+        if(mFinishedCounter.get() >= mTotalToLoad)
         {
             if(mLoaderTuples.size() == mTotalToLoad) //We download them all: success
             {
@@ -98,6 +104,8 @@ public class MultipleLoader<Identifier> {
             {
                 callback.failure(new Exception("Failed to download using STRICT_POLICY"));
             }
+
+            callback.always();
         }
     }
 

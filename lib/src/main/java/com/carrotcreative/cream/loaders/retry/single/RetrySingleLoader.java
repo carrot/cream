@@ -41,4 +41,9 @@ public class RetrySingleLoader<Identifier> extends RetryLoader implements Single
         mRetrySingleLoaderCallback.failedAttempt(mAttemptNumber);
     }
 
+    @Override
+    public void always() {
+        mRetrySingleLoaderCallback.always();
+    }
+
 }

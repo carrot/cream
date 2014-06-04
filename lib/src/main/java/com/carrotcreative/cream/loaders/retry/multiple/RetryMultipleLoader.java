@@ -41,6 +41,11 @@ public class RetryMultipleLoader<Identifier> extends RetryLoader implements Mult
     }
 
     @Override
+    public void always() {
+        mRetryMultipleLoaderCallback.always();
+    }
+
+    @Override
     public void retryLoad() {
         mMultiLoader.load(mIds, mSingleLoader, this);
     }

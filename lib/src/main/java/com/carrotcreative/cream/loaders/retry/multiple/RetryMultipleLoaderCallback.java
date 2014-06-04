@@ -7,4 +7,5 @@ import java.util.ArrayList;
 public interface RetryMultipleLoaderCallback {
     void success(ArrayList<MultipleLoaderTuple> content);
     void failedAttempt(int attemptNumber);
+    void always();
 }
