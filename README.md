@@ -9,6 +9,16 @@ CREAM is not a "plug into your HTTP-Client and forget about it" type library.  C
 
 For each of your API calls (or whatever that's pulled externally that needs to be cached) you'll need to make a Loader.
 
+###Adding CREAM to your project
+
+You'll have to go to the releases page and download the most recent release.
+
+For gradle: Add the JAR to your libs folder and add this to your dependencies in your build.gradle file (with appropriate version number).
+
+```
+compile files('libs/cream-X.X.X.jar')
+```
+
 ###SingleLoader - Setup
 
 Single loaders are the bread and butter of CREAM.  They're used directly to make a single cached external call, and are very simply passed into RetryLoaders and MultipleLoaders to get them up and running really quickly.
