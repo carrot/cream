@@ -17,7 +17,11 @@ import java.io.Serializable;
 
 /**
  * Single Loaders are the bread and butter of CREAM.
- * This allows you to make a single
+ *
+ * This allows you to make a single external call to an
+ * API (or any other external source for that matter)
+ * and the SingleLoader (defined earlier in cache.loaders)
+ * will take care of the rest.
  */
 public class SingleLoaderActivity extends Activity implements SingleLoaderCallback {
 
