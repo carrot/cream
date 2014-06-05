@@ -3,8 +3,6 @@ CREAM
 
 > **Note:** This project is in early development, and versioning is a little different. [Read this](http://markup.im/#q4_cRZ1Q) for more details.
 
-> An example project can be found [here](https://github.com/carrot/CREAM-example).
-
 Cream is a caching library for Android.
 
 CREAM is not a "plug into your HTTP-Client and forget about it" type library.  CREAM is focused on flexibility above all else.  That being said, CREAM is a little more verbose than other alternatives (although it's still not bad at all).
