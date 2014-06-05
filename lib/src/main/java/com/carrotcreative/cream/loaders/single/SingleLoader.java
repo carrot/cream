@@ -77,7 +77,7 @@ public abstract class SingleLoader<T> {
 
     protected abstract long getTrashMinutes();
 
-    protected abstract boolean shouldCache(T identifier);
+    public abstract boolean shouldCache(T identifier);
 
     protected abstract void loadFromSource(T identifier, SingleLoaderCallback cb);
 
@@ -85,7 +85,7 @@ public abstract class SingleLoader<T> {
 
     //======= Read
 
-    protected void loadFromCache(final T identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback)
+    public void loadFromCache(final T identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback)
     {
         final String prefix = getPrefix(identifier);
         final SingleLoader thisLoader = this;
@@ -122,7 +122,7 @@ public abstract class SingleLoader<T> {
      * Just writing content to cache, it shouldn't really ever fail
      * but we're giving it mWriteAttempts attempts at it.
      */
-    protected void writeContent(T identifier, Serializable content)
+    public void writeContent(T identifier, Serializable content)
     {
         writeContentRecursive(mWriteAttempts, identifier, content);
     }

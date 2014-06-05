@@ -65,7 +65,7 @@ public class GithubUserLoader extends SingleLoader<String> {
      * be possible.
      */
     @Override
-    protected boolean shouldCache(String user) {
+    public boolean shouldCache(String user) {
         return true;
     }
 
@@ -77,23 +77,17 @@ public class GithubUserLoader extends SingleLoader<String> {
     @Override
     protected void loadFromSource(final String user, final SingleLoaderCallback singleLoaderCallback) {
 
+        final SingleLoader<String> thisLoader = this;
+
         GithubAPIBuilder.getAPI().getUser(user, new Callback<GithubUser>() {
             @Override
             public void success(GithubUser githubUser, Response response) {
-                writeContent(user, githubUser);
-                singleLoaderCallback.success(githubUser, false); //False -- Not from Cache
-                singleLoaderCallback.always();
+                mCacheStrategy.handleSourceSuccess(user, githubUser, thisLoader, singleLoaderCallback);
             }
 
             @Override
             public void failure(RetrofitError error) {
-                if(shouldCache(user))
-                    loadFromCache(user, false, singleLoaderCallback);
-                else
-                {
-                    singleLoaderCallback.failure(error);
-                    singleLoaderCallback.always();
-                }
+                mCacheStrategy.handleSourceFailure(user, error, thisLoader, singleLoaderCallback);
             }
         });
     }
