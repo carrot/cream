@@ -128,10 +128,10 @@ public class GithubUserLoader extends SingleLoader<String> {
 // Creating a StandardCacheStrategy object to plug into the Loader
 CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getContext());
 
-GithubUserLoader loader = new GithubUserLoader(this, cacheStrategy);
-loader.loadSelf(userName, new SingleLoaderCallback() {
+GithubUserLoader loader = new GithubUserLoader(getContext(), cacheStrategy);
+loader.loadSelf("BrandonRomano", new SingleLoaderCallback() {
     @Override
-    public void success(Serializable serializable, boolean b) {
+    public void success(Serializable serializable, boolean fromCache) {
         // Success!  We have the user here, do whatever you please to them.
         GithubUser user = (GithubUser) serializable;
     }
@@ -150,6 +150,11 @@ Multiple loaders are really useful when an API you're using lacks the functional
 After you've got your single loader set up, multiple loaders are really simple to get up and running.
 
 ```java
+// Creating an ArrayList of all of the users we will download
+ArrayList<String> githubUserNames = new ArrayList<String>();
+githubUserNames.add("BrandonRomano");
+githubUserNames.add("pruett");
+
 // Creating a StandardCacheStrategy object to plug into the Loader
 CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getContext());
 
@@ -160,7 +165,7 @@ final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheSt
 final MultipleLoader<String> multipleLoader = new MultipleLoader<String>(MultipleLoader.STRICT_POLICY);
 
 // Load!
-multipleLoader.load(mGithubUserNames, singleLoader, new MultipleLoaderCallback() {
+multipleLoader.load(githubUserNames, singleLoader, new MultipleLoaderCallback() {
     @Override
     public void success(ArrayList<MultipleLoaderTuple> loaderTuples) {
         //TODO handle success, serializable objects are packed into the tuples
@@ -194,7 +199,7 @@ final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheSt
 final RetrySingleLoader<String> retrySingleLoader = new RetrySingleLoader<String>(singleLoader);
 
 // Load!
-retrySingleLoader.loadSelf(sGithubUserName, new RetrySingleLoaderCallback() {
+retrySingleLoader.loadSelf("BrandonRomano", new RetrySingleLoaderCallback() {
     @Override
     public void success(Serializable serializable, boolean b) {
         // Success!  We have the user here, do whatever you please to them.
@@ -203,6 +208,7 @@ retrySingleLoader.loadSelf(sGithubUserName, new RetrySingleLoaderCallback() {
 
     @Override
     public void failedAttempt(int attemptNumber) {
+        // Add your custom logic to calling retry here, but here's an example
         if(attemptNumber < MAX_RETRY_ATTEMPTS)
         {
             retrySingleLoader.retry();
@@ -245,8 +251,8 @@ retryMultipleLoader.loadSelf(mGithubUserNames, new RetryMultipleLoaderCallback()
     }
 
     @Override
-    public void failedAttempt(int i) {
-        if(i < MAX_RETRY_ATTEMPTS)
+    public void failedAttempt(int attemptNumber) {
+        if(attemptNumber < MAX_RETRY_ATTEMPTS)
         {
             retryMultipleLoader.retry();
         }
@@ -271,4 +277,4 @@ You'll most likely find that your application has some type of caching default, 
 
 ###Example
 
-The example goes over most of the features, and would be the best way to get started, so check it out [here](https://github.com/carrot/CREAM-example).
+The example goes over most of the features, and would be the best way to get started.  It's included in the project.
