@@ -9,7 +9,13 @@ CREAM is not a "plug into your HTTP-Client and forget about it" type library.  C
 
 For each of your API calls (or whatever that's pulled externally that needs to be cached) you'll need to make a Loader.
 
-###SingleLoader
+###Cache Strategies
+
+Before we get into talking about loaders, let's take a quick look at Cache Strategies.
+
+###SingleLoader - Setup
+
+Single loaders are the bread and butter of CREAM.  They're used directly to make a single cached external call, and are very simply passed into RetryLoaders and MultipleLoaders to get them up and running really quickly.
 
 ```java
 public class GithubUserLoader extends SingleLoader<String> {
@@ -80,16 +86,26 @@ public class GithubUserLoader extends SingleLoader<String> {
         GithubAPIBuilder.getAPI().getUser(user, new Callback<GithubUser>() {
             @Override
             public void success(GithubUser githubUser, Response response) {
+                // Don't forget to cache the content, or else this library is useless!
                 writeContent(user, githubUser);
+                
+                //This is really important that you call these -- let the callback know
                 singleLoaderCallback.success(githubUser, false); //False -- Not from Cache
+                singleLoaderCallback.always();
             }
 
             @Override
             public void failure(RetrofitError error) {
+                // You might have to handle other things here, 
+                // but the structure of your API falures should always
+                // look something like this.
                 if(shouldCache(user))
                     loadFromCache(user, false, singleLoaderCallback);
                 else
+                {
                     singleLoaderCallback.failure(error);
+                    singleLoaderCallback.always();
+                }
             }
         });
     }
@@ -106,9 +122,12 @@ public class GithubUserLoader extends SingleLoader<String> {
 }
 ```
 
-To use the SingleLoader:
+###SingleLoader - Usage
 
 ```java
+// Creating a StandardCacheStrategy object to plug into the Loader
+CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getContext());
+
 GithubUserLoader loader = new GithubUserLoader(this, cacheStrategy);
 loader.loadSelf(userName, new SingleLoaderCallback() {
     @Override
@@ -124,17 +143,132 @@ loader.loadSelf(userName, new SingleLoaderCallback() {
 });
 ```
 
-### Too verbose?
+### Multiple Loaders
+
+Multiple loaders are really useful when an API you're using lacks the functionality to make a call for multiple data points at once.  This functionality in CREAM makes it feel like the API functionality actually exists.
+
+After you've got your single loader set up, multiple loaders are really simple to get up and running.
+
+```java
+// Creating a StandardCacheStrategy object to plug into the Loader
+CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getContext());
+
+// Creating the single loader
+final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheStrategy);
+
+// Creating a multiple loader with a STRICT_POLICY (all successful or loader will fail)
+final MultipleLoader<String> multipleLoader = new MultipleLoader<String>(MultipleLoader.STRICT_POLICY);
+
+// Load!
+multipleLoader.load(mGithubUserNames, singleLoader, new MultipleLoaderCallback() {
+    @Override
+    public void success(ArrayList<MultipleLoaderTuple> loaderTuples) {
+        //TODO handle success, serializable objects are packed into the tuples
+    }
+
+    @Override
+    public void failure(Exception e) {
+        //TODO handle failure
+    }
+
+    @Override
+    public void always() {
+        //TODO handle always
+    }
+});
+
+```
+
+###Retry Loaders
+
+Retry Loaders are useful as mobile internet is notorious for being unstable.  Retry loaders make it easy to retry a call in the event of a failure.
+
+```java
+// Creating a StandardCacheStrategy object to plug into the Loader
+CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getContext());
+
+// Creating the loader
+final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheStrategy);
+
+// Creating a retry loader
+final RetrySingleLoader<String> retrySingleLoader = new RetrySingleLoader<String>(singleLoader);
+
+// Load!
+retrySingleLoader.loadSelf(sGithubUserName, new RetrySingleLoaderCallback() {
+    @Override
+    public void success(Serializable serializable, boolean b) {
+        // Success!  We have the user here, do whatever you please to them.
+        GithubUser user = (GithubUser) serializable;
+    }
+
+    @Override
+    public void failedAttempt(int attemptNumber) {
+        if(attemptNumber < MAX_RETRY_ATTEMPTS)
+        {
+            retrySingleLoader.retry();
+        }
+        else
+        {
+            //TODO handle 
+        }
+    }
+
+    @Override
+    public void always() {
+        //TODO handle if you need this
+    }
+}
+```
+
+###Multiple Retry Loaders
+
+You might run into a situation in which you need a multiple loader that is also a retry loader.  Don't worry, CREAM's has got you covered.
+
+```java
+// Creating a StandardCacheStrategy object to plug into the Loader
+CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getContext());
+
+// Creating the loader
+final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheStrategy);
+
+// Creating a multiple loader with a STRICT_POLICY
+final MultipleLoader<String> multipleLoader = new MultipleLoader<String>(MultipleLoader.STRICT_POLICY);
+
+// Creating a retryMultipleLoader
+final RetryMultipleLoader<String> retryMultipleLoader = new RetryMultipleLoader<String>(multipleLoader, singleLoader);
+
+// Load!
+retryMultipleLoader.loadSelf(mGithubUserNames, new RetryMultipleLoaderCallback() {
+    @Override
+    public void success(ArrayList<MultipleLoaderTuple> loaderTuples) {
+        // Serializable objects packed into the loaderTuples
+    }
+
+    @Override
+    public void failedAttempt(int i) {
+        if(i < MAX_RETRY_ATTEMPTS)
+        {
+            retryMultipleLoader.retry();
+        }
+        else
+        {
+            //TODO handle error
+        }
+    }
+
+    @Override
+    public void always() {
+        signal.countDown();
+    }
+
+});
+
+```
+
+###Too verbose?
 
 You'll most likely find that your application has some type of caching default, so feel free to extend the SingleLoader class to implement some of the methods as defaults and override them as needed.
 
-### Other Features
-
-- Multiple Loaders 
-  * Allows you to spawn multiple loaders to hit an API more than once
-- Repeat Loaders
-  * Allows you to keep trying the API until you decide to stop. 
-
-### Example
+###Example
 
 The example goes over most of the features, and would be the best way to get started, so check it out [here](https://github.com/carrot/CREAM-example).
