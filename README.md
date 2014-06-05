@@ -67,7 +67,7 @@ public class GithubUserLoader extends SingleLoader<String> {
      * be possible.
      */
     @Override
-    protected boolean shouldCache(String user) {
+    public boolean shouldCache(String user) {
         return true;
     }
 
@@ -79,29 +79,17 @@ public class GithubUserLoader extends SingleLoader<String> {
     @Override
     protected void loadFromSource(final String user, final SingleLoaderCallback singleLoaderCallback) {
 
+        final SingleLoader<String> thisLoader = this;
+
         GithubAPIBuilder.getAPI().getUser(user, new Callback<GithubUser>() {
             @Override
             public void success(GithubUser githubUser, Response response) {
-                // Don't forget to cache the content, or else this library is useless!
-                writeContent(user, githubUser);
-                
-                //This is really important that you call these -- let the callback know
-                singleLoaderCallback.success(githubUser, false); //False -- Not from Cache
-                singleLoaderCallback.always();
+                mCacheStrategy.handleSourceSuccess(user, githubUser, thisLoader, singleLoaderCallback);
             }
 
             @Override
             public void failure(RetrofitError error) {
-                // You might have to handle other things here, 
-                // but the structure of your API falures should always
-                // look something like this.
-                if(shouldCache(user))
-                    loadFromCache(user, false, singleLoaderCallback);
-                else
-                {
-                    singleLoaderCallback.failure(error);
-                    singleLoaderCallback.always();
-                }
+                mCacheStrategy.handleSourceFailure(user, error, thisLoader, singleLoaderCallback);
             }
         });
     }
@@ -121,8 +109,8 @@ public class GithubUserLoader extends SingleLoader<String> {
 ###SingleLoader - Usage
 
 ```java
-// Creating a StandardCacheStrategy object to plug into the Loader
-CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getContext());
+// Creating a CachePreferred object to plug into the Loader
+CacheStrategy<String> cacheStrategy = new CachePreferred<String>(getContext());
 
 GithubUserLoader loader = new GithubUserLoader(getContext(), cacheStrategy);
 loader.loadSelf("BrandonRomano", new SingleLoaderCallback() {
@@ -151,8 +139,8 @@ ArrayList<String> githubUserNames = new ArrayList<String>();
 githubUserNames.add("BrandonRomano");
 githubUserNames.add("pruett");
 
-// Creating a StandardCacheStrategy object to plug into the Loader
-CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getContext());
+// Creating a CachePreferred object to plug into the Loader
+CacheStrategy<String> cacheStrategy = new CachePreferred<String>(getContext());
 
 // Creating the single loader
 final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheStrategy);
@@ -185,8 +173,8 @@ multipleLoader.load(githubUserNames, singleLoader, new MultipleLoaderCallback() 
 Retry Loaders are useful as mobile internet is notorious for being unstable.  Retry loaders make it easy to retry a call in the event of a failure.
 
 ```java
-// Creating a StandardCacheStrategy object to plug into the Loader
-CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getContext());
+// Creating a CachePreferred object to plug into the Loader
+CacheStrategy<String> cacheStrategy = new CachePreferred<String>(getContext());
 
 // Creating the loader
 final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheStrategy);
@@ -227,8 +215,8 @@ retrySingleLoader.loadSelf("BrandonRomano", new RetrySingleLoaderCallback() {
 You might run into a situation in which you need a multiple loader that is also a retry loader.  Don't worry, CREAM's has got you covered.
 
 ```java
-// Creating a StandardCacheStrategy object to plug into the Loader
-CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getContext());
+// Creating a CachePreferred object to plug into the Loader
+CacheStrategy<String> cacheStrategy = new CachePreferred<String>(getContext());
 
 // Creating the loader
 final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheStrategy);
