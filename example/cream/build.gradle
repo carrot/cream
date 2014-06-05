@@ -29,7 +29,7 @@ dependencies {
 }
 
 task clearJar(type: Delete) {
-    delete 'build/libs/cream-0.0.2.jar'
+    delete 'build/libs/cream-0.0.3.jar'
 }
 
 task makeJar(type: Copy) {
