@@ -8,8 +8,8 @@ import android.widget.EditText;
 import com.carrotcreative.cream.loaders.multiple.MultipleLoader;
 import com.carrotcreative.cream.loaders.multiple.MultipleLoaderCallback;
 import com.carrotcreative.cream.loaders.multiple.MultipleLoaderTuple;
-import com.carrotcreative.cream.strategies.CacheStrategy;
-import com.carrotcreative.cream.strategies.StandardCacheStrategy;
+import com.carrotcreative.cream.strategies.CachePreferred;
+import com.carrotcreative.cream.strategies.generic.CacheStrategy;
 import com.carrotcreative.cream_example.app.R;
 import com.carrotcreative.cream_example.app.cache.loaders.GithubUserLoader;
 import com.carrotcreative.cream_example.app.util.DisplayManager;
@@ -58,7 +58,7 @@ public class MultipleLoaderActivity extends Activity implements MultipleLoaderCa
         ids.add(mUsernameField2.getText().toString());
 
         //Creating a StandardCacheStrategy object to plug into the Loader
-        CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(this);
+        CacheStrategy<String> cacheStrategy = new CachePreferred<String>(this);
 
         // Creating the loader + calling loadSelf
         GithubUserLoader loader = new GithubUserLoader(this, cacheStrategy);

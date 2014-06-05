@@ -1,4 +1,4 @@
-package com.carrotcreative.cream.strategies;
+package com.carrotcreative.cream.strategies.generic;
 
 public interface CacheStrategyCallback {
 

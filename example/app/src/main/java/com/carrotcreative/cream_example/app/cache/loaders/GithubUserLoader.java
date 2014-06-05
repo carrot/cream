@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.carrotcreative.cream.loaders.single.SingleLoader;
 import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
-import com.carrotcreative.cream.strategies.CacheStrategy;
+import com.carrotcreative.cream.strategies.generic.CacheStrategy;
 import com.carrotcreative.cream_example.app.net.GithubAPIBuilder;
 import com.carrotcreative.cream_example.app.net.GithubUser;
 

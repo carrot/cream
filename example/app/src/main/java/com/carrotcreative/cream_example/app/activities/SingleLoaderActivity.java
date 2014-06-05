@@ -6,8 +6,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
-import com.carrotcreative.cream.strategies.CacheStrategy;
-import com.carrotcreative.cream.strategies.StandardCacheStrategy;
+import com.carrotcreative.cream.strategies.generic.CacheStrategy;
+import com.carrotcreative.cream.strategies.CachePreferred;
 import com.carrotcreative.cream_example.app.R;
 import com.carrotcreative.cream_example.app.cache.loaders.GithubUserLoader;
 import com.carrotcreative.cream_example.app.net.GithubUser;
@@ -59,7 +59,7 @@ public class SingleLoaderActivity extends Activity implements SingleLoaderCallba
         String userName = mUsernameField.getText().toString();
 
         //Creating a StandardCacheStrategy object to plug into the Loader
-        CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(this);
+        CacheStrategy<String> cacheStrategy = new CachePreferred<String>(this);
 
         // Creating the loader + calling loadSelf
         GithubUserLoader loader = new GithubUserLoader(this, cacheStrategy);

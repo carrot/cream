@@ -1,4 +1,4 @@
-package com.carrotcreative.cream.strategies;
+package com.carrotcreative.cream.strategies.generic;
 
 import com.carrotcreative.cream.loaders.single.SingleLoader;
 import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;

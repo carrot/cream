@@ -10,8 +10,8 @@ import com.carrotcreative.cream.loaders.retry.multiple.RetryMultipleLoaderCallba
 import com.carrotcreative.cream.loaders.retry.single.RetrySingleLoader;
 import com.carrotcreative.cream.loaders.retry.single.RetrySingleLoaderCallback;
 import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
-import com.carrotcreative.cream.strategies.CacheStrategy;
-import com.carrotcreative.cream.strategies.StandardCacheStrategy;
+import com.carrotcreative.cream.strategies.generic.CacheStrategy;
+import com.carrotcreative.cream.strategies.CachePreferred;
 import com.carrotcreative.cream.test.util.AsyncFunctionFunctor;
 import com.carrotcreative.cream.test.util.AsyncFunctionTest;
 import com.carrotcreative.cream.test.util.ErrorHolder;
@@ -56,7 +56,7 @@ public class LoaderTest extends InstrumentationTestCase {
      */
     public void testSingleLoader() throws Throwable {
         // Creating a StandardCacheStrategy object to plug into the Loader
-        CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getInstrumentation().getContext());
+        CacheStrategy<String> cacheStrategy = new CachePreferred<String>(getInstrumentation().getContext());
 
         // Creating the loader
         final GithubUserLoader loader = new GithubUserLoader(getInstrumentation().getContext(), cacheStrategy);
@@ -100,7 +100,7 @@ public class LoaderTest extends InstrumentationTestCase {
      */
     public void testMultipleLoader() throws Throwable {
         // Creating a StandardCacheStrategy object to plug into the Loader
-        CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getInstrumentation().getContext());
+        CacheStrategy<String> cacheStrategy = new CachePreferred<String>(getInstrumentation().getContext());
 
         // Creating the loader
         final GithubUserLoader singleLoader = new GithubUserLoader(getInstrumentation().getContext(), cacheStrategy);
@@ -142,7 +142,7 @@ public class LoaderTest extends InstrumentationTestCase {
      */
     public void testRetrySingleLoader() throws Throwable {
         // Creating a StandardCacheStrategy object to plug into the Loader
-        CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getInstrumentation().getContext());
+        CacheStrategy<String> cacheStrategy = new CachePreferred<String>(getInstrumentation().getContext());
 
         // Creating the loader
         final GithubUserLoader singleLoader = new GithubUserLoader(getInstrumentation().getContext(), cacheStrategy);
@@ -195,7 +195,7 @@ public class LoaderTest extends InstrumentationTestCase {
      */
     public void testRetryMultipleLoader() throws Throwable {
         // Creating a StandardCacheStrategy object to plug into the Loader
-        CacheStrategy<String> cacheStrategy = new StandardCacheStrategy<String>(getInstrumentation().getContext());
+        CacheStrategy<String> cacheStrategy = new CachePreferred<String>(getInstrumentation().getContext());
 
         // Creating the loader
         final GithubUserLoader singleLoader = new GithubUserLoader(getInstrumentation().getContext(), cacheStrategy);
