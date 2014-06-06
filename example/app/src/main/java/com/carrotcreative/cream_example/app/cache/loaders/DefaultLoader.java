@@ -35,9 +35,4 @@ public abstract class DefaultLoader<T> extends SingleLoader<T> {
         return true;
     }
 
-    @Override
-    protected String getPrefix(T identifier) {
-        return identifier.toString();
-    }
-
 }

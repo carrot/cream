@@ -67,6 +67,11 @@ public abstract class SingleLoader<T> {
         });
     }
 
+    private String getPrefix(T identifier)
+    {
+        return identifier.toString();
+    }
+
     //======== Abstract
 
     protected abstract String getDirectory();
@@ -81,14 +86,11 @@ public abstract class SingleLoader<T> {
 
     protected abstract void loadFromSource(T identifier, SingleLoaderCallback cb);
 
-    protected abstract String getPrefix(T identifier);
-
     //======= Read
 
     public void loadFromCache(final T identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback)
     {
         final String prefix = getPrefix(identifier);
-        final SingleLoader thisLoader = this;
 
         CacheManager.getInstance(mContext).readSerializable(getDirectory(), getFileExtension(), prefix, hasExpirationRegard,
                 new ReadSerializableTask.ReadSerializableCallback() {
@@ -150,9 +152,6 @@ public abstract class SingleLoader<T> {
 
     //======= Cleanup
 
-    /**
-     * //TODO run this somewhere
-     */
     public void runCleanup()
     {
         CacheManager.getInstance(mContext).runTrashCleanup(getDirectory(), getFileExtension(), getTrashMinutes());
