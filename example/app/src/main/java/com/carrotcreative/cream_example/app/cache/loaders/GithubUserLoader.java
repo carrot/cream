@@ -12,6 +12,11 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+/**
+ * For simplicity, we're not using the DefaultLoader in this class.
+ * A normal implementation would probably extend our DefaultLoader,
+ * so we can avoid filling out all of the methods.
+ */
 public class GithubUserLoader extends SingleLoader<String> {
 
     public GithubUserLoader(Context context, CacheStrategy<String> cacheStrategy) {

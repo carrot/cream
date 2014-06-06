@@ -14,4 +14,11 @@ public interface GithubAPI {
             Callback<GithubUser> cb
     );
 
+    @GET("/repos/{owner}/{repo}")
+    public void getRepo(
+            @Path("owner") String owner,
+            @Path("repo") String repo,
+            Callback<GithubRepo> cb
+    );
+
 }
