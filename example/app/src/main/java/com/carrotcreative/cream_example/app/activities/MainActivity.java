@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.carrotcreative.cream_example.app.R;
+import com.carrotcreative.cream_example.app.cache.CacheClearTask;
 
 public class MainActivity extends Activity {
 
@@ -14,6 +15,13 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         applyOnClicks();
+        clearOldCache();
+    }
+
+    private void clearOldCache()
+    {
+        CacheClearTask cacheClearTask = new CacheClearTask(this);
+        cacheClearTask.execute();
     }
 
     private void applyOnClicks()
