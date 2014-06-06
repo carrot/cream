@@ -19,6 +19,12 @@ For gradle: Add the JAR to your libs folder and add this to your dependencies in
 compile files('libs/cream-X.X.X.jar')
 ```
 
+You'll also need this permission:
+
+```
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
+
 ###SingleLoader - Setup
 
 Single loaders are the bread and butter of CREAM.  They're used directly to make a single cached external call, and are very simply passed into RetryLoaders and MultipleLoaders to get them up and running really quickly.
