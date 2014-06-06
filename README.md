@@ -110,15 +110,6 @@ public class GithubUserLoader extends SingleLoader<String> {
         });
     }
 
-    /**
-     * This is the unique identifier for the user
-     * to identify it in cache.
-     */
-    @Override
-    protected String getPrefix(String user) {
-        return user;
-    }
-
 }
 ```
 
