@@ -25,7 +25,7 @@ You'll also need this permission:
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
 
-###SingleLoader - Setup
+###SingleLoader - Setup (Single API Param)
 
 Single loaders are the bread and butter of CREAM.  They're used directly to make a single cached external call, and are very simply passed into RetryLoaders and MultipleLoaders to get them up and running really quickly.
 
@@ -117,6 +117,52 @@ public class GithubUserLoader extends SingleLoader<String> {
     @Override
     protected String getPrefix(String user) {
         return user;
+    }
+
+}
+```
+
+###SingleLoader - Setup (Multiple API Params)
+
+Most of your API calls are probably going to have more than one parameter.  You'll have to create a Definition Object.
+
+In the definition object, you'll need to implement the toString() method in a manner that uniquely identifies the API call.
+
+```java
+public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinition>{
+    
+    //...
+
+    protected void loadFromSource(final RepoDefinition repo, final SingleLoaderCallback cb){
+        final GithubRepoLoader thisLoader = this;
+
+        GithubAPIBuilder.getAPI().getRepo(repo.owner, repo.name, new Callback<GithubRepo>() {
+            @Override
+            public void success(GithubRepo githubRepo, Response response) {
+                mCacheStrategy.handleSourceSuccess(repo, githubRepo, thisLoader, cb);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                mCacheStrategy.handleSourceFailure(repo, error, thisLoader, cb);
+            }
+        });
+    }
+
+    /**
+     * See "Multiple params in API Call"
+     * section in GithubRepoLoader
+     */
+    public class RepoDefinition
+    {
+        public String owner;
+        public String name;
+
+        @Override
+        public String toString()
+        {
+            return owner + "." + name;
+        }
     }
 
 }
