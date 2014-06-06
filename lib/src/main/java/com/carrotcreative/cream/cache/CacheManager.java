@@ -80,12 +80,16 @@ public class CacheManager {
     {
         File cleanupDir = new File(mRootDir, directoryString);
         File[] allFiles = cleanupDir.listFiles();
-        for(File f : allFiles)
-        {
-            long trashDate = getFileTrashDate(f, fileExtension, trashMinutes);
-            if(f.isFile() && (System.currentTimeMillis() > trashDate))
+
+        //http://docs.oracle.com/javase/1.5.0/docs/api/java/io/File.html#listFiles%28%29
+        if(allFiles != null){
+            for(File f : allFiles)
             {
-                f.delete();
+                long trashDate = getFileTrashDate(f, fileExtension, trashMinutes);
+                if(f.isFile() && (System.currentTimeMillis() > trashDate))
+                {
+                    f.delete();
+                }
             }
         }
     }
