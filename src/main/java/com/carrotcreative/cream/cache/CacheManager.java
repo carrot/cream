@@ -85,10 +85,13 @@ public class CacheManager {
         if(allFiles != null){
             for(File f : allFiles)
             {
-                long trashDate = getFileTrashDate(f, fileExtension, trashMinutes);
-                if(f.isFile() && (System.currentTimeMillis() > trashDate))
+                if(f.toString().endsWith(fileExtension))
                 {
-                    f.delete();
+                    long trashDate = getFileTrashDate(f, fileExtension, trashMinutes);
+                    if(f.isFile() && (System.currentTimeMillis() > trashDate))
+                    {
+                        f.delete();
+                    }
                 }
             }
         }
