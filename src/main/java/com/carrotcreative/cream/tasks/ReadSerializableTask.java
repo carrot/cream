@@ -7,10 +7,11 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 
-public class ReadSerializableTask extends AsyncTask<Void, Void, Void> {
+public class ReadSerializableTask extends AsyncTask<Void, Void, Serializable> {
 
     private ReadSerializableCallback mCallback;
     private File mFileToRead;
+    private Exception mException;
 
     public ReadSerializableTask(ReadSerializableCallback callback, File toRead){
         mCallback = callback;
@@ -18,9 +19,8 @@ public class ReadSerializableTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-
-        Exception exception = null;
+    protected Serializable doInBackground(Void... params)
+    {
         Serializable serializableObject = null;
         FileInputStream fis = null;
         ObjectInputStream is = null;
@@ -30,7 +30,7 @@ public class ReadSerializableTask extends AsyncTask<Void, Void, Void> {
             is = new ObjectInputStream(fis);
             serializableObject = (Serializable) is.readObject();
         } catch(Exception e) {
-            exception = e;
+            mException = e;
         } finally {
             try {
                 if (fis != null)   fis.close();
@@ -38,19 +38,18 @@ public class ReadSerializableTask extends AsyncTask<Void, Void, Void> {
             } catch (Exception e) { /* Do nothing */ }
         }
 
-        if(serializableObject != null){
-            mCallback.success(serializableObject);
-        }
-        else{
-            mCallback.failure(exception);
-        }
-
-        return null;
+        return serializableObject;
     }
 
-    protected void onPostExecute(Void value)
+    protected void onPostExecute(Serializable obj)
     {
-        super.onPostExecute(value);
+        super.onPostExecute(obj);
+
+        if(obj != null)
+            mCallback.success(obj);
+        else
+            mCallback.failure(mException);
+
         mCallback.always();
     }
 
