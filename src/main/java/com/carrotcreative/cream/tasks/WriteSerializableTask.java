@@ -33,6 +33,7 @@ public class WriteSerializableTask extends AsyncTask<Void, Void, Void> {
             oos.writeObject(mObject);
         } catch (Exception e) {
             keep = false;
+            exception = e;
         } finally {
             try {
                 if (oos != null)   oos.close();
