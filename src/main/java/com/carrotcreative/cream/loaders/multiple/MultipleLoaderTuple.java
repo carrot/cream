@@ -4,13 +4,12 @@ import java.io.Serializable;
 
 public class MultipleLoaderTuple {
 
-    public Serializable mContent;
-    public boolean mFromCache;
+    private final Serializable mContent;
+    private final boolean mFromCache;
 
     public MultipleLoaderTuple(Serializable content, boolean fromCache)
     {
         mContent = content;
         mFromCache = fromCache;
     }
-
 }
