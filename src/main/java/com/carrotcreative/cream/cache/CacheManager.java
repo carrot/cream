@@ -29,8 +29,8 @@ public class CacheManager {
     //============== Class ==============
     //===================================
 
-    private File mRootDir;
-    public Context mContext;
+    private final File mRootDir;
+    private final Context mContext;
 
     private CacheManager(Context context)
     {
@@ -125,9 +125,8 @@ public class CacheManager {
 
     private long getFileExpiration(File f, String extension)
     {
-        String expirationString = f.getName().replaceFirst(".*-", "").replace("."+ extension, "");
-        long expiration = Long.parseLong(expirationString);
-        return expiration;
+        String expirationString = f.getName().replaceFirst(".*-", "").replace("." + extension, "");
+        return Long.parseLong(expirationString);
     }
 
     private long getExpirationEpochMinutes(long minutes)
