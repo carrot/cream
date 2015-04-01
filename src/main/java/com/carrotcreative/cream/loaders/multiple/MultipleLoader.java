@@ -10,11 +10,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MultipleLoader<Identifier> {
 
     /** This policy requires everything to be downloaded, or else it fails */
-    public static final int STRICT_POLICY = 1;
+    private static final int STRICT_POLICY = 1;
 
     /** This policy tries to download everything,
         but is still successful even if only one element is downloaded */
-    public static final int RELAXED_POLICY = 2;
+    private static final int RELAXED_POLICY = 2;
 
     //===================================
 

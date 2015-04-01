@@ -12,8 +12,8 @@ import java.io.Serializable;
 
 public abstract class SingleLoader<T> {
 
-    protected Context mContext;
-    protected CacheStrategy<T> mCacheStrategy;
+    private final Context mContext;
+    private final CacheStrategy<T> mCacheStrategy;
 
     public SingleLoader(Context context, CacheStrategy<T> cacheStrategy)
     {
@@ -25,7 +25,7 @@ public abstract class SingleLoader<T> {
         handleInitialLoad(identifier, callback);
     }
 
-    protected void handleInitialLoad(final T identifier, final SingleLoaderCallback callback)
+    void handleInitialLoad(final T identifier, final SingleLoaderCallback callback)
     {
         mCacheStrategy.handleInitialLoad(identifier, shouldCache(identifier), new CacheStrategyCallback() {
             @Override
@@ -46,7 +46,7 @@ public abstract class SingleLoader<T> {
         });
     }
 
-    protected void handleCacheFailure(final T identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback, Exception error)
+    void handleCacheFailure(final T identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback, Exception error)
     {
         mCacheStrategy.handleCacheFailure(identifier, hasExpirationRegard, error, new CacheStrategyCallback() {
             @Override
@@ -118,7 +118,7 @@ public abstract class SingleLoader<T> {
      * This can be overwritten in a subclass if you feel
      * 3 isn't the right number
      */
-    protected int mWriteAttempts = 3;
+    private int mWriteAttempts = 3;
 
     /**
      * Just writing content to cache, it shouldn't really ever fail

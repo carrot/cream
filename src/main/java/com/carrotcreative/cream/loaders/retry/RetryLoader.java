@@ -4,14 +4,14 @@ import android.os.Handler;
 
 public abstract class RetryLoader {
 
-    protected static final int START_RETRY_SECONDS = 2;
-    protected static final int MAX_RETRY_SECONDS = 64;
-    protected static final float RETRY_SECONDS_GROWTH_RATE = 1.5f;
+    private static final int START_RETRY_SECONDS = 2;
+    private static final int MAX_RETRY_SECONDS = 64;
+    private static final float RETRY_SECONDS_GROWTH_RATE = 1.5f;
 
     protected int mAttemptNumber = 0;
-    protected int mRetrySeconds;
+    private int mRetrySeconds;
 
-    public RetryLoader()
+    protected RetryLoader()
     {
         mRetrySeconds = START_RETRY_SECONDS;
     }
