@@ -48,7 +48,7 @@ public class CacheManager {
         File directory = new File(mRootDir, directoryString);
 
         //Finding the file
-        final File[] matchingFiles = getMatchingFiles(directory, prefix + "-.*");
+        final File[] matchingFiles = getMatchingFiles(directory, prefix, fileExtension);
         for(File f : matchingFiles)
         {
             long expiration = getFileExpiration(f, fileExtension);
@@ -69,7 +69,7 @@ public class CacheManager {
         long expiration = getExpirationEpochMinutes(expirationMinutes);
         String fileString = prefix + "-" + expiration + "." + fileExtension;
         File file = new File(directory, fileString);
-        deleteAllByPrefix(prefix, directory);
+        deleteAllByPrefix(prefix, directory, fileExtension);
         writeSerializable(content, file, cb);
     }
 
@@ -107,9 +107,9 @@ public class CacheManager {
      * We're writing a fresh object, so obviously
      * we want to delete all of the old ones.
      */
-    private void deleteAllByPrefix(String prefix, File directory)
+    private void deleteAllByPrefix(String prefix, File directory, String fileExtension)
     {
-        final File[] matchingFiles = getMatchingFiles(directory, prefix + "-.*");
+        final File[] matchingFiles = getMatchingFiles(directory, prefix, fileExtension);
         for(File f : matchingFiles)
         {
             f.delete();
@@ -135,7 +135,8 @@ public class CacheManager {
         return System.currentTimeMillis() + diff;
     }
 
-    private static File[] getMatchingFiles(File root, String regex) {
+    private static File[] getMatchingFiles(File root, String prefix, String fileExtension) {
+        String regex = prefix + "-.*" + "." + fileExtension;
         if(!root.isDirectory()) {
             root.mkdir();
             return new File[0];
