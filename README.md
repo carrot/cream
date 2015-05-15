@@ -1,8 +1,6 @@
 CREAM
 -----
 
-> **Note:** This project is in early development, and versioning is a little different. [Read this](http://markup.im/#q4_cRZ1Q) for more details.
-
 Cream is a caching library for Android.
 
 CREAM is not a "plug into your HTTP-Client and forget about it" type library.  CREAM is focused on flexibility above all else.  That being said, CREAM is a little more verbose than other alternatives (although it's still not bad at all).
@@ -125,7 +123,7 @@ In the definition object, you'll need to implement the toString() method in a ma
 
 ```java
 public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinition>{
-    
+
     //...
 
     protected void loadFromSource(final RepoDefinition repo, final SingleLoaderCallback cb){
@@ -256,7 +254,7 @@ retrySingleLoader.loadSelf("BrandonRomano", new RetrySingleLoaderCallback() {
         }
         else
         {
-            //TODO handle 
+            //TODO handle
         }
     }
 
@@ -318,4 +316,4 @@ You'll most likely find that your application has some type of caching default, 
 
 ###Example
 
-The example goes over most of the features, and would be the best way to get started.  It's included in the project.
+There's an example that goes over most of the features, and can be found [here](https://github.com/carrot/cream-example).
