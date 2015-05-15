@@ -9,21 +9,21 @@ import com.carrotcreative.cream.loaders.single.SingleLoader;
 
 import java.util.ArrayList;
 
-public class RetryMultipleLoader<Identifier extends LoaderParams> extends RetryLoader implements MultipleLoaderCallback {
+public class RetryMultipleLoader<Params extends LoaderParams> extends RetryLoader implements MultipleLoaderCallback {
 
     private RetryMultipleLoaderCallback mRetryMultipleLoaderCallback;
-    private final MultipleLoader<Identifier> mMultiLoader;
-    private final SingleLoader<Identifier> mSingleLoader;
-    private ArrayList<Identifier> mIds;
+    private final MultipleLoader<Params> mMultiLoader;
+    private final SingleLoader<Params> mSingleLoader;
+    private ArrayList<Params> mIds;
 
-    public RetryMultipleLoader(MultipleLoader<Identifier> multiLoader, SingleLoader<Identifier> singleLoader)
+    public RetryMultipleLoader(MultipleLoader<Params> multiLoader, SingleLoader<Params> singleLoader)
     {
         super();
         mMultiLoader = multiLoader;
         mSingleLoader = singleLoader;
     }
 
-    public void loadSelf(final ArrayList<Identifier> ids, RetryMultipleLoaderCallback callback)
+    public void loadSelf(final ArrayList<Params> ids, RetryMultipleLoaderCallback callback)
     {
         mIds = ids;
         mRetryMultipleLoaderCallback = callback;
