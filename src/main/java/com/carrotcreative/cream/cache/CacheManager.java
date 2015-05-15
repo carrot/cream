@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 
 public class CacheManager {
 
+    public static final String PREFIX_EXPIRATION_DELIMITER = "-CR-";
+
     //=======================================
     //============== Singleton ==============
     //=======================================
@@ -65,9 +67,8 @@ public class CacheManager {
     public void writeSerializable(String directoryString, long expirationMinutes, String fileExtension, String prefix, Serializable content, WriteSerializableTask.WriteSerializableCallback cb)
     {
         File directory = new File(mRootDir, directoryString);
-
         long expiration = getExpirationEpochMinutes(expirationMinutes);
-        String fileString = prefix + "-" + expiration + "." + fileExtension;
+        String fileString = prefix + PREFIX_EXPIRATION_DELIMITER + expiration + "." + fileExtension;
         File file = new File(directory, fileString);
         deleteAllByPrefix(prefix, directory, fileExtension);
         writeSerializable(content, file, cb);
@@ -125,7 +126,9 @@ public class CacheManager {
 
     private long getFileExpiration(File f, String extension)
     {
-        String expirationString = f.getName().replaceFirst(".*-", "").replace("." + extension, "");
+        String expirationString = f.getName()
+                .replaceFirst(".*" + PREFIX_EXPIRATION_DELIMITER, "")
+                .replace("." + extension, "");
         return Long.parseLong(expirationString);
     }
 
@@ -136,8 +139,9 @@ public class CacheManager {
     }
 
     private static File[] getMatchingFiles(File root, String prefix, String fileExtension) {
-        String regex = prefix + "-.*" + "." + fileExtension;
-        if(!root.isDirectory()) {
+        String regex = prefix + PREFIX_EXPIRATION_DELIMITER + ".*" + "\\." + fileExtension;
+        if(!root.isDirectory())
+        {
             root.mkdir();
             return new File[0];
         }
