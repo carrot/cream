@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MultipleLoader<Identifier extends LoaderParams> {
+public class MultipleLoader<Params extends LoaderParams> {
 
     /** This policy requires everything to be downloaded, or else it fails */
     public static final int STRICT_POLICY = 1;
@@ -29,12 +29,12 @@ public class MultipleLoader<Identifier extends LoaderParams> {
         mDownloadPolicy = downloadPolicy;
     }
 
-    public void load(final ArrayList<Identifier> ids, SingleLoader<Identifier> loader, final MultipleLoaderCallback multipleCallback) {
+    public void load(final ArrayList<Params> ids, SingleLoader<Params> loader, final MultipleLoaderCallback multipleCallback) {
         mLoaderTuples = new ArrayList<MultipleLoaderTuple>();
         mFinishedCounter = new AtomicInteger(0);
         mTotalToLoad = ids.size();
 
-        for (final Identifier id : ids) {
+        for (final Params id : ids) {
             loader.loadSelf(id, new SingleLoaderCallback() {
 
                 @Override

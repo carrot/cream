@@ -12,32 +12,32 @@ import com.carrotcreative.cream.util.HashingUtil;
 
 import java.io.Serializable;
 
-public abstract class SingleLoader<T extends LoaderParams> {
+public abstract class SingleLoader<Params extends LoaderParams> {
 
     protected Context mContext;
-    protected CacheStrategy<T> mCacheStrategy;
+    protected CacheStrategy<Params> mCacheStrategy;
 
-    public SingleLoader(Context context, CacheStrategy<T> cacheStrategy)
+    public SingleLoader(Context context, CacheStrategy<Params> cacheStrategy)
     {
         mContext = context;
         mCacheStrategy = cacheStrategy;
     }
 
-    public void loadSelf(final T identifier, final SingleLoaderCallback callback){
-        handleInitialLoad(identifier, callback);
+    public void loadSelf(final Params params, final SingleLoaderCallback callback){
+        handleInitialLoad(params, callback);
     }
 
-    protected void handleInitialLoad(final T identifier, final SingleLoaderCallback callback)
+    protected void handleInitialLoad(final Params params, final SingleLoaderCallback callback)
     {
-        mCacheStrategy.handleInitialLoad(identifier, shouldCache(identifier), new CacheStrategyCallback() {
+        mCacheStrategy.handleInitialLoad(params, shouldCache(params), new CacheStrategyCallback() {
             @Override
             public void handleFromCache() {
-                loadFromCache(identifier, true, callback);
+                loadFromCache(params, true, callback);
             }
 
             @Override
             public void handleFromAPI() {
-                loadFromSource(identifier, callback);
+                loadFromSource(params, callback);
             }
 
             @Override
@@ -48,7 +48,7 @@ public abstract class SingleLoader<T extends LoaderParams> {
         });
     }
 
-    protected void handleCacheFailure(final T identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback, Exception error)
+    protected void handleCacheFailure(final Params identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback, Exception error)
     {
         mCacheStrategy.handleCacheFailure(identifier, hasExpirationRegard, error, new CacheStrategyCallback() {
             @Override
@@ -69,7 +69,7 @@ public abstract class SingleLoader<T extends LoaderParams> {
         });
     }
 
-    private String getPrefix(T identifier)
+    private String getPrefix(Params identifier)
     {
         return HashingUtil.getHash(identifier.getIdentifier());
     }
@@ -84,13 +84,13 @@ public abstract class SingleLoader<T extends LoaderParams> {
 
     protected abstract long getTrashMinutes();
 
-    public abstract boolean shouldCache(T identifier);
+    public abstract boolean shouldCache(Params identifier);
 
-    protected abstract void loadFromSource(T identifier, SingleLoaderCallback cb);
+    protected abstract void loadFromSource(Params identifier, SingleLoaderCallback cb);
 
     //======= Read
 
-    public void loadFromCache(final T identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback)
+    public void loadFromCache(final Params identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback)
     {
         final String prefix = getPrefix(identifier);
 
@@ -126,12 +126,12 @@ public abstract class SingleLoader<T extends LoaderParams> {
      * Just writing content to cache, it shouldn't really ever fail
      * but we're giving it mWriteAttempts attempts at it.
      */
-    public void writeContent(T identifier, Serializable content)
+    public void writeContent(Params identifier, Serializable content)
     {
         writeContentRecursive(mWriteAttempts, identifier, content);
     }
 
-    private void writeContentRecursive(final int attemptsRemaining, final T identifier, final Serializable content) {
+    private void writeContentRecursive(final int attemptsRemaining, final Params identifier, final Serializable content) {
         final String prefix = getPrefix(identifier);
         if (attemptsRemaining > 0) {
 
