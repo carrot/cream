@@ -2,13 +2,14 @@ package com.carrotcreative.cream.strategies.generic;
 
 import android.content.Context;
 
+import com.carrotcreative.cream.params.LoaderParams;
 import com.carrotcreative.cream.loaders.single.SingleLoader;
 import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
 import com.carrotcreative.cream.util.InternetStatus;
 
 import java.io.Serializable;
 
-public abstract class StandardCacheStrategy<T> implements CacheStrategy<T> {
+public abstract class StandardCacheStrategy<T extends LoaderParams> implements CacheStrategy<T> {
 
     private Context mContext;
 

@@ -2,6 +2,7 @@ package com.carrotcreative.cream.strategies;
 
 import android.content.Context;
 
+import com.carrotcreative.cream.params.LoaderParams;
 import com.carrotcreative.cream.strategies.generic.CacheStrategyCallback;
 import com.carrotcreative.cream.strategies.generic.StandardCacheStrategy;
 
@@ -24,7 +25,7 @@ import com.carrotcreative.cream.strategies.generic.StandardCacheStrategy;
  *     else
  *          ->Hit the cache with no regard to expiration
  */
-public class CachePreferred<T> extends StandardCacheStrategy<T> {
+public class CachePreferred<T extends LoaderParams> extends StandardCacheStrategy<T> {
 
     public CachePreferred(Context context) {
         super(context);

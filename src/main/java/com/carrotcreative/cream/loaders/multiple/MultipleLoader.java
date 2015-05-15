@@ -1,5 +1,6 @@
 package com.carrotcreative.cream.loaders.multiple;
 
+import com.carrotcreative.cream.params.LoaderParams;
 import com.carrotcreative.cream.loaders.single.SingleLoader;
 import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
 
@@ -7,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MultipleLoader<Identifier> {
+public class MultipleLoader<Identifier extends LoaderParams> {
 
     /** This policy requires everything to be downloaded, or else it fails */
     public static final int STRICT_POLICY = 1;
