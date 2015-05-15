@@ -18,7 +18,7 @@ public class HashingUtil
      * @param secret The string that needs to be hashed.
      * @return The hashed value.
      */
-    public static String genHash(@NonNull String secret)
+    public static String getHash(@NonNull String secret)
     {
         String hashedValue = mCache.get(secret);
         if(hashedValue == null)
@@ -39,16 +39,8 @@ public class HashingUtil
             messageDigest.update(secret.getBytes("UTF-8"));
             hashedString = new String(messageDigest.digest());
         }
-        catch (NoSuchAlgorithmException e)
-        {
-            try
-            {
-                hashedString = Base64.encodeToString(secret.getBytes("UTF-8"), Base64.DEFAULT);
-            }
-            catch (UnsupportedEncodingException ee) {/* Do nothing */}
-
-        }
-        catch (UnsupportedEncodingException e) { /* Do nothing */}
+        catch (NoSuchAlgorithmException e) { /* Do nothing */ }
+        catch (UnsupportedEncodingException e) { /* Do nothing */ }
 
         if(hashedString == null)
         {

@@ -71,7 +71,7 @@ public abstract class SingleLoader<T extends LoaderParams> {
 
     private String getPrefix(T identifier)
     {
-        return HashingUtil.genHash(identifier.getIdentifier());
+        return HashingUtil.getHash(identifier.getIdentifier());
     }
 
     //======== Abstract
