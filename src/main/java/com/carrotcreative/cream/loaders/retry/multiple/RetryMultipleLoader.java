@@ -4,11 +4,12 @@ import com.carrotcreative.cream.loaders.multiple.MultipleLoaderCallback;
 import com.carrotcreative.cream.loaders.multiple.MultipleLoaderTuple;
 import com.carrotcreative.cream.loaders.multiple.MultipleLoader;
 import com.carrotcreative.cream.loaders.retry.RetryLoader;
+import com.carrotcreative.cream.params.LoaderParams;
 import com.carrotcreative.cream.loaders.single.SingleLoader;
 
 import java.util.ArrayList;
 
-public class RetryMultipleLoader<Identifier> extends RetryLoader implements MultipleLoaderCallback {
+public class RetryMultipleLoader<Identifier extends LoaderParams> extends RetryLoader implements MultipleLoaderCallback {
 
     private RetryMultipleLoaderCallback mRetryMultipleLoaderCallback;
     private final MultipleLoader<Identifier> mMultiLoader;

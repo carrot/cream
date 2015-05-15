@@ -1,12 +1,13 @@
 package com.carrotcreative.cream.loaders.retry.single;
 
 import com.carrotcreative.cream.loaders.retry.RetryLoader;
+import com.carrotcreative.cream.params.LoaderParams;
 import com.carrotcreative.cream.loaders.single.SingleLoader;
 import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
 
 import java.io.Serializable;
 
-public class RetrySingleLoader<Identifier> extends RetryLoader implements SingleLoaderCallback {
+public class RetrySingleLoader<Identifier extends LoaderParams> extends RetryLoader implements SingleLoaderCallback {
 
     private RetrySingleLoaderCallback mRetrySingleLoaderCallback;
     private final SingleLoader<Identifier> mLoader;

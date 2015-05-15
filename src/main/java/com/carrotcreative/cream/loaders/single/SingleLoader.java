@@ -3,14 +3,16 @@ package com.carrotcreative.cream.loaders.single;
 import android.content.Context;
 
 import com.carrotcreative.cream.cache.CacheManager;
+import com.carrotcreative.cream.params.LoaderParams;
 import com.carrotcreative.cream.strategies.generic.CacheStrategy;
 import com.carrotcreative.cream.strategies.generic.CacheStrategyCallback;
 import com.carrotcreative.cream.tasks.ReadSerializableTask;
 import com.carrotcreative.cream.tasks.WriteSerializableTask;
+import com.carrotcreative.cream.util.HashingUtil;
 
 import java.io.Serializable;
 
-public abstract class SingleLoader<T> {
+public abstract class SingleLoader<T extends LoaderParams> {
 
     protected Context mContext;
     protected CacheStrategy<T> mCacheStrategy;
@@ -69,7 +71,7 @@ public abstract class SingleLoader<T> {
 
     private String getPrefix(T identifier)
     {
-        return identifier.toString();
+        return HashingUtil.genHash(identifier.getIdentifier());
     }
 
     //======== Abstract
