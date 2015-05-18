@@ -23,9 +23,9 @@ public class RetryMultipleLoader<Params extends LoaderParams> extends RetryLoade
         mSingleLoader = singleLoader;
     }
 
-    public void loadSelf(final ArrayList<Params> ids, RetryMultipleLoaderCallback callback)
+    public void loadSelf(final ArrayList<Params> paramsList, RetryMultipleLoaderCallback callback)
     {
-        mParamsList = ids;
+        mParamsList = paramsList;
         mRetryMultipleLoaderCallback = callback;
         mMultiLoader.load(mParamsList, mSingleLoader, this);
     }
