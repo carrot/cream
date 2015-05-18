@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class CacheManager {
 
-    public static final String PREFIX_EXPIRATION_DELIMITER = "-CR-";
+    public static final String PREFIX_EXPIRATION_DELIMITER = "-";
 
     //=======================================
     //============== Singleton ==============

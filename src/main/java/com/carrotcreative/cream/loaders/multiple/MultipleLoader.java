@@ -1,5 +1,6 @@
 package com.carrotcreative.cream.loaders.multiple;
 
+import com.carrotcreative.cream.params.LoaderParams;
 import com.carrotcreative.cream.loaders.single.SingleLoader;
 import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
 
@@ -7,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MultipleLoader<Identifier> {
+public class MultipleLoader<Params extends LoaderParams> {
 
     /** This policy requires everything to be downloaded, or else it fails */
     public static final int STRICT_POLICY = 1;
@@ -28,13 +29,13 @@ public class MultipleLoader<Identifier> {
         mDownloadPolicy = downloadPolicy;
     }
 
-    public void load(final ArrayList<Identifier> ids, SingleLoader<Identifier> loader, final MultipleLoaderCallback multipleCallback) {
+    public void load(final ArrayList<Params> paramsList, SingleLoader<Params> loader, final MultipleLoaderCallback multipleCallback) {
         mLoaderTuples = new ArrayList<MultipleLoaderTuple>();
         mFinishedCounter = new AtomicInteger(0);
-        mTotalToLoad = ids.size();
+        mTotalToLoad = paramsList.size();
 
-        for (final Identifier id : ids) {
-            loader.loadSelf(id, new SingleLoaderCallback() {
+        for (final Params param : paramsList) {
+            loader.loadSelf(param, new SingleLoaderCallback() {
 
                 @Override
                 public void success(Serializable content, boolean fromCache) {

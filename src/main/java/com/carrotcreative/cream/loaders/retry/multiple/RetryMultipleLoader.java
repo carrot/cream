@@ -4,29 +4,30 @@ import com.carrotcreative.cream.loaders.multiple.MultipleLoaderCallback;
 import com.carrotcreative.cream.loaders.multiple.MultipleLoaderTuple;
 import com.carrotcreative.cream.loaders.multiple.MultipleLoader;
 import com.carrotcreative.cream.loaders.retry.RetryLoader;
+import com.carrotcreative.cream.params.LoaderParams;
 import com.carrotcreative.cream.loaders.single.SingleLoader;
 
 import java.util.ArrayList;
 
-public class RetryMultipleLoader<Identifier> extends RetryLoader implements MultipleLoaderCallback {
+public class RetryMultipleLoader<Params extends LoaderParams> extends RetryLoader implements MultipleLoaderCallback {
 
     private RetryMultipleLoaderCallback mRetryMultipleLoaderCallback;
-    private final MultipleLoader<Identifier> mMultiLoader;
-    private final SingleLoader<Identifier> mSingleLoader;
-    private ArrayList<Identifier> mIds;
+    private final MultipleLoader<Params> mMultiLoader;
+    private final SingleLoader<Params> mSingleLoader;
+    private ArrayList<Params> mParamsList;
 
-    public RetryMultipleLoader(MultipleLoader<Identifier> multiLoader, SingleLoader<Identifier> singleLoader)
+    public RetryMultipleLoader(MultipleLoader<Params> multiLoader, SingleLoader<Params> singleLoader)
     {
         super();
         mMultiLoader = multiLoader;
         mSingleLoader = singleLoader;
     }
 
-    public void loadSelf(final ArrayList<Identifier> ids, RetryMultipleLoaderCallback callback)
+    public void loadSelf(final ArrayList<Params> paramsList, RetryMultipleLoaderCallback callback)
     {
-        mIds = ids;
+        mParamsList = paramsList;
         mRetryMultipleLoaderCallback = callback;
-        mMultiLoader.load(mIds, mSingleLoader, this);
+        mMultiLoader.load(mParamsList, mSingleLoader, this);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class RetryMultipleLoader<Identifier> extends RetryLoader implements Mult
 
     @Override
     public void retryLoad() {
-        mMultiLoader.load(mIds, mSingleLoader, this);
+        mMultiLoader.load(mParamsList, mSingleLoader, this);
     }
 
 }
