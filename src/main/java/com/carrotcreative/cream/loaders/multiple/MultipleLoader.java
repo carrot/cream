@@ -29,13 +29,13 @@ public class MultipleLoader<Params extends LoaderParams> {
         mDownloadPolicy = downloadPolicy;
     }
 
-    public void load(final ArrayList<Params> ids, SingleLoader<Params> loader, final MultipleLoaderCallback multipleCallback) {
+    public void load(final ArrayList<Params> paramsList, SingleLoader<Params> loader, final MultipleLoaderCallback multipleCallback) {
         mLoaderTuples = new ArrayList<MultipleLoaderTuple>();
         mFinishedCounter = new AtomicInteger(0);
-        mTotalToLoad = ids.size();
+        mTotalToLoad = paramsList.size();
 
-        for (final Params id : ids) {
-            loader.loadSelf(id, new SingleLoaderCallback() {
+        for (final Params param : paramsList) {
+            loader.loadSelf(param, new SingleLoaderCallback() {
 
                 @Override
                 public void success(Serializable content, boolean fromCache) {

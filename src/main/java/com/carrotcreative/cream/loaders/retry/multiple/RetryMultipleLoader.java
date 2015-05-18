@@ -14,7 +14,7 @@ public class RetryMultipleLoader<Params extends LoaderParams> extends RetryLoade
     private RetryMultipleLoaderCallback mRetryMultipleLoaderCallback;
     private final MultipleLoader<Params> mMultiLoader;
     private final SingleLoader<Params> mSingleLoader;
-    private ArrayList<Params> mIds;
+    private ArrayList<Params> mParamsList;
 
     public RetryMultipleLoader(MultipleLoader<Params> multiLoader, SingleLoader<Params> singleLoader)
     {
@@ -25,9 +25,9 @@ public class RetryMultipleLoader<Params extends LoaderParams> extends RetryLoade
 
     public void loadSelf(final ArrayList<Params> ids, RetryMultipleLoaderCallback callback)
     {
-        mIds = ids;
+        mParamsList = ids;
         mRetryMultipleLoaderCallback = callback;
-        mMultiLoader.load(mIds, mSingleLoader, this);
+        mMultiLoader.load(mParamsList, mSingleLoader, this);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class RetryMultipleLoader<Params extends LoaderParams> extends RetryLoade
 
     @Override
     public void retryLoad() {
-        mMultiLoader.load(mIds, mSingleLoader, this);
+        mMultiLoader.load(mParamsList, mSingleLoader, this);
     }
 
 }
