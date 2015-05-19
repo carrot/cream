@@ -195,7 +195,7 @@ public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinit
 ###SingleLoader - Usage
 
 ```java
-String userName = ""BrandonRomano"";
+String userName = "BrandonRomano";
 
 //Creating a StandardCacheStrategy object to plug into the Loader
 CacheStrategy<GithubUserLoaderParams> cacheStrategy = new CachePreferred<GithubUserLoaderParams>(this);
