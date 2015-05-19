@@ -35,7 +35,7 @@ LoaderParams are used to pass required parameters to the loaders.
 
 public class GithubUserLoaderParams implements LoaderParams
 {
-    ...
+    // ...
 
     /**
     * The most important method.
