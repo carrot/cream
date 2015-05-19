@@ -27,6 +27,28 @@ You'll also need this permission:
 
 To see an example, visit https://github.com/carrot/cream-example, although much of the example is discussed in this README.
 
+###LoaderParams - Setup (Loader Param)
+
+LoaderParams are used to pass required parameters to the loaders.
+
+```java
+
+public class GithubUserLoaderParams implements LoaderParams
+{
+    ...
+
+    /**
+    * The most important method.
+    * @return A value that uniquely identifies an api request.
+    */
+    @Override
+    public String getIdentifier()
+    {
+        return getUserId();
+    }
+}
+```
+
 ###SingleLoader - Setup (Single API Param)
 
 Single loaders are the bread and butter of CREAM.  They're used directly to make a single cached external call, and are very simply passed into RetryLoaders and MultipleLoaders to get them up and running really quickly.
@@ -122,9 +144,9 @@ Most of your API calls are probably going to have more than one parameter.  You'
 In the definition object, you'll need to implement the toString() method in a manner that uniquely identifies the API call.
 
 ```java
-public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinition>{
+public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinitionParams>{
 
-    public GithubRepoLoader(Context context, CacheStrategy<GithubRepoLoader.RepoDefinition> cacheStrategy) {
+    public GithubRepoLoader(Context context, CacheStrategy<GithubRepoLoader.RepoDefinitionParams> cacheStrategy) {
         super(context, cacheStrategy);
     }
 
@@ -134,7 +156,7 @@ public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinit
     }
 
     @Override
-    protected void loadFromSource(final GithubRepoLoader.RepoDefinition repo, final SingleLoaderCallback cb){
+    protected void loadFromSource(final GithubRepoLoader.RepoDefinitionParams repo, final SingleLoaderCallback cb){
         final GithubRepoLoader thisLoader = this;
 
         GithubAPIBuilder.getAPI().getRepo(repo.owner, repo.name, new Callback<GithubRepo>() {
@@ -154,7 +176,7 @@ public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinit
      * See "Multiple params in API Call"
      * section in GithubRepoLoader
      */
-    public class RepoDefinition implements LoaderParams
+    public class RepoDefinitionParams implements LoaderParams
     {
         public String owner;
         public String name;
@@ -167,6 +189,7 @@ public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinit
     }
 
 }
+
 ```
 
 ###SingleLoader - Usage
@@ -191,6 +214,7 @@ loader.loadSelf(new GithubUserLoaderParams(userName), new SingleLoaderCallback()
         //Failure, handle this however you would like.
     }
 });
+
 ```
 
 ### Multiple Loaders
@@ -277,6 +301,7 @@ retrySingleLoader.loadSelf(params, new RetrySingleLoaderCallback() {
         //TODO handle if you need this
     }
 }
+
 ```
 
 ###Multiple Retry Loaders
