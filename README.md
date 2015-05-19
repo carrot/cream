@@ -312,7 +312,7 @@ You might run into a situation in which you need a multiple loader that is also 
 // Creating an ArrayList of all of the users we will download
 ArrayList<GithubUserLoaderParams> paramsList = new ArrayList<GithubUserLoaderParams>();
 paramsList.add( new GithubUserLoaderParams("BrandonRomano");
-paramsList.add( new GithubUserLoaderParams("pruett");
+paramsList.add( new GithubUserLoaderParams("roideuniverse");
 
 // Creating a CachePreferred object to plug into the Loader
 CacheStrategy<GithubUserLoaderParams> cacheStrategy = new CachePreferred<GithubUserLoaderParams>(getContext());
