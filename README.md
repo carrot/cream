@@ -139,14 +139,14 @@ public class GithubUserLoader extends SingleLoader<GithubUserLoaderParams> {
 
 ###SingleLoader - Setup (Multiple API Params)
 
-Most of your API calls are probably going to have more than one parameter.  You'll have to create a Definition Object.
+Most of your API calls are probably going to have more than one parameter.  You'll have to create a LoaderParams Object.
 
-In the definition object, you'll need to implement the toString() method in a manner that uniquely identifies the API call.
+In the LoaderParams object, you'll need to implement the getIdentifier() method in a manner that uniquely identifies the API call.
 
 ```java
-public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinitionParams>{
+public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoParams>{
 
-    public GithubRepoLoader(Context context, CacheStrategy<GithubRepoLoader.RepoDefinitionParams> cacheStrategy) {
+    public GithubRepoLoader(Context context, CacheStrategy<GithubRepoLoader.RepoParams> cacheStrategy) {
         super(context, cacheStrategy);
     }
 
@@ -156,18 +156,18 @@ public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinit
     }
 
     @Override
-    protected void loadFromSource(final GithubRepoLoader.RepoDefinitionParams repo, final SingleLoaderCallback cb){
+    protected void loadFromSource(final GithubRepoLoader.RepoParams repoParam, final SingleLoaderCallback cb){
         final GithubRepoLoader thisLoader = this;
 
-        GithubAPIBuilder.getAPI().getRepo(repo.owner, repo.name, new Callback<GithubRepo>() {
+        GithubAPIBuilder.getAPI().getRepo(repoParam.owner, repoParam.name, new Callback<GithubRepo>() {
             @Override
             public void success(GithubRepo githubRepo, Response response) {
-                mCacheStrategy.handleSourceSuccess(repo, githubRepo, thisLoader, cb);
+                mCacheStrategy.handleSourceSuccess(repoParam, githubRepo, thisLoader, cb);
             }
 
             @Override
             public void failure(RetrofitError error) {
-                mCacheStrategy.handleSourceFailure(repo, error, thisLoader, cb);
+                mCacheStrategy.handleSourceFailure(repoParam, error, thisLoader, cb);
             }
         });
     }
@@ -176,7 +176,7 @@ public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoDefinit
      * See "Multiple params in API Call"
      * section in GithubRepoLoader
      */
-    public class RepoDefinitionParams implements LoaderParams
+    public class RepoParams implements LoaderParams
     {
         public String owner;
         public String name;
@@ -227,7 +227,7 @@ After you've got your single loader set up, multiple loaders are really simple t
 // Creating an ArrayList of all of the users we will download
 ArrayList<GithubUserLoaderParams> paramsList = new ArrayList<GithubUserLoaderParams>();
 paramsList.add( new GithubUserLoaderParams("BrandonRomano");
-paramsList.add( new GithubUserLoaderParams("pruett");
+paramsList.add( new GithubUserLoaderParams("roideuniverse");
 
 //Creating a StandardCacheStrategy object to plug into the Loader
 CacheStrategy<GithubUserLoaderParams> cacheStrategy = new CachePreferred<GithubUserLoaderParams>(this);
