@@ -42,6 +42,6 @@ task makeJar(type: Copy) {
     from('build/bundles/release/')
     into('build/libs/')
     include('classes.jar')
-    rename ('classes.jar', 'cream-0.0.1.jar')
+    rename ('classes.jar', 'cream.jar')
 }
 makeJar.dependsOn(clearJar, build)
