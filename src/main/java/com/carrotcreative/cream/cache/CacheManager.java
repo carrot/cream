@@ -34,7 +34,7 @@ public class CacheManager {
 
     private final File mRootDir;
     private final Context mContext;
-    private boolean mLruCacheEnabled;
+    private boolean mLruCacheEnabled = false;
     private LruCache<String, LruCacheEntry> mLruCache;
 
     private CacheManager(Context context)
