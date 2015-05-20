@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.carrotcreative.cream.tasks.ReadSerializableTask;
 import com.carrotcreative.cream.tasks.WriteSerializableTask;
+import com.carrotcreative.cream.util.LruCache;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -33,11 +34,38 @@ public class CacheManager {
 
     private final File mRootDir;
     private final Context mContext;
+    private boolean mLruCacheEnabled = false;
+    private LruCache<String, LruCacheEntry> mLruCache;
 
     private CacheManager(Context context)
     {
         mContext = context;
         mRootDir = context.getCacheDir();
+    }
+
+    /**
+     *
+     * @param lruCacheSize The max size of the cache. ex: 4 * 1024 * 1024 = 4MiB
+     */
+    public void enableLruCache(int lruCacheSize)
+    {
+        if(mLruCache == null)
+        {
+            if(lruCacheSize < 0)
+            {
+                throw new IllegalStateException("Invalid LruCache Size:" + lruCacheSize);
+            }
+            
+            mLruCacheEnabled = true;
+            mLruCache = new LruCache<String, LruCacheEntry>(lruCacheSize)
+            {
+                @Override
+                protected int sizeOf(String key, LruCacheEntry entry)
+                {
+                    return entry.getSize();
+                }
+            };
+        }
     }
 
     //============================================
@@ -91,7 +119,7 @@ public class CacheManager {
                     long trashDate = getFileTrashDate(f, fileExtension, trashMinutes);
                     if(f.isFile() && (System.currentTimeMillis() > trashDate))
                     {
-                        f.delete();
+                        deleteFile(f);
                     }
                 }
             }
@@ -113,7 +141,7 @@ public class CacheManager {
         final File[] matchingFiles = getMatchingFiles(directory, prefix, fileExtension);
         for(File f : matchingFiles)
         {
-            f.delete();
+            deleteFile(f);
         }
     }
 
@@ -154,19 +182,47 @@ public class CacheManager {
         });
     }
 
-    private static void writeSerializable(Serializable obj, File file,
-                                          WriteSerializableTask.WriteSerializableCallback cb) {
-
+    private void writeSerializable(Serializable obj, File file,
+                                          WriteSerializableTask.WriteSerializableCallback cb)
+    {
+        if(mLruCacheEnabled)
+        {
+            mLruCache.put(file.getAbsolutePath(), new LruCacheEntry(obj));
+        }
         WriteSerializableTask task = new WriteSerializableTask(obj, file, cb);
         Void[] voidArray = new Void[0];
         task.execute(voidArray);
     }
 
-    private void readSerializable(File file, ReadSerializableTask.ReadSerializableCallback cb) {
-
+    private void readSerializable(File file, ReadSerializableTask.ReadSerializableCallback cb)
+    {
+        if(mLruCacheEnabled)
+        {
+            LruCacheEntry entry = mLruCache.get(file.getAbsolutePath());
+            if(entry != null)
+            {
+                cb.success(entry.getValue());
+                return;
+            }
+        }
         ReadSerializableTask task = new ReadSerializableTask(cb, file);
         Void[] voidArray = new Void[0];
         task.execute(voidArray);
+    }
+
+    private void deleteFile(File file)
+    {
+        if(file != null)
+        {
+            if(file.exists())
+            {
+                file.delete();
+            }
+            if(mLruCacheEnabled)
+            {
+                mLruCache.remove(file.getAbsolutePath());
+            }
+        }
     }
 
 }
