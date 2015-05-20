@@ -47,6 +47,11 @@ public class CacheManager {
     {
         if(mLruCache == null)
         {
+            if(lruCacheSize < 0)
+            {
+                throw new IllegalStateException("Invalid LruCache Size:" + lruCacheSize);
+            }
+            
             mLruCacheEnabled = true;
             mLruCache = new LruCache<String, LruCacheEntry>(lruCacheSize)
             {
