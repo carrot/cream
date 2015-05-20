@@ -43,7 +43,11 @@ public class CacheManager {
         mRootDir = context.getCacheDir();
     }
 
-    public void setLruCacheSize(int lruCacheSize)
+    /**
+     *
+     * @param lruCacheSize The max size of the cache. ex: 4 * 1024 * 1024 = 4MiB
+     */
+    public void enableLruCache(int lruCacheSize)
     {
         if(mLruCache == null)
         {
