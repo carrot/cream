@@ -9,18 +9,27 @@ For each of your API calls (or whatever that's pulled externally that needs to b
 
 ###Adding CREAM to your project
 
-You'll have to go to the releases page and download the most recent release.
+To include this module in your project, go to the releases and download the lastest release .aar file.
 
-For gradle: Add the JAR to your libs folder and add this to your dependencies in your build.gradle file (with appropriate version number).
+Take that aar file, and place it in your projects `libs` folder.
 
+Add in to your projects `build.gradle` file's dependencies:
+
+```gradle
+dependencies {
+    //...
+    compile(name:'cream-v2.X.X', ext:'aar') // Replace X with actual version number
+}
 ```
-compile files('libs/cream-X.X.X.jar')
-```
 
-You'll also need this permission:
+Also add the libs folder as a repository if you haven't already:
 
-```
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```gradle
+repositories{
+    flatDir{
+        dirs 'libs'
+    }
+}
 ```
 
 ### Example
