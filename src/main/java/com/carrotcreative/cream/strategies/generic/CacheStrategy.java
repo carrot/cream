@@ -6,14 +6,14 @@ import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
 
 import java.io.Serializable;
 
-public interface CacheStrategy<T extends LoaderParams> {
+public interface CacheStrategy<T extends LoaderParams, C extends Serializable> {
 
-    public void handleInitialLoad(final T identifier, final boolean shouldCache, final CacheStrategyCallback callback);
+    void handleInitialLoad(final T identifier, final boolean shouldCache, final CacheStrategyCallback callback);
 
-    public void handleCacheFailure(final T identifier, final boolean hasExpirationRegard, Exception error, final CacheStrategyCallback callback);
+    void handleCacheFailure(final T identifier, final boolean hasExpirationRegard, Exception error, final CacheStrategyCallback callback);
 
-    public void handleSourceSuccess(final T identifier, final Serializable object, SingleLoader<T> singleLoader, SingleLoaderCallback singleLoaderCallback);
+    void handleSourceSuccess(final T identifier, final C object, SingleLoader<T, C> singleLoader, SingleLoaderCallback<C> singleLoaderCallback);
 
-    public void handleSourceFailure(final T identifier, Exception error, SingleLoader<T> singleLoader, SingleLoaderCallback singleLoaderCallback);
+    void handleSourceFailure(final T identifier, Exception error, SingleLoader<T, C> singleLoader, SingleLoaderCallback<C> singleLoaderCallback);
 
 }

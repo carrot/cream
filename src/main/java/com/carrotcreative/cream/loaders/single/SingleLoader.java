@@ -12,12 +12,12 @@ import com.carrotcreative.cream.util.HashingUtil;
 
 import java.io.Serializable;
 
-public abstract class SingleLoader<Params extends LoaderParams> {
+public abstract class SingleLoader<Params extends LoaderParams, Content extends Serializable> {
 
     protected Context mContext;
-    protected CacheStrategy<Params> mCacheStrategy;
+    protected CacheStrategy<Params, Content> mCacheStrategy;
 
-    public SingleLoader(Context context, CacheStrategy<Params> cacheStrategy)
+    public SingleLoader(Context context, CacheStrategy<Params, Content> cacheStrategy)
     {
         mContext = context;
         mCacheStrategy = cacheStrategy;
@@ -48,7 +48,7 @@ public abstract class SingleLoader<Params extends LoaderParams> {
         });
     }
 
-    protected void handleCacheFailure(final Params identifier, final boolean hasExpirationRegard, final SingleLoaderCallback singleLoaderCallback, Exception error)
+    protected void handleCacheFailure(final Params identifier, final boolean hasExpirationRegard, final SingleLoaderCallback<Content> singleLoaderCallback, Exception error)
     {
         mCacheStrategy.handleCacheFailure(identifier, hasExpirationRegard, error, new CacheStrategyCallback() {
             @Override

@@ -2,12 +2,12 @@ package com.carrotcreative.cream.loaders.multiple;
 
 import java.io.Serializable;
 
-public class MultipleLoaderTuple {
+public class MultipleLoaderTuple<Content extends Serializable> {
 
-    public Serializable mContent;
+    public Content mContent;
     public boolean mFromCache;
 
-    public MultipleLoaderTuple(Serializable content, boolean fromCache)
+    public MultipleLoaderTuple(Content content, boolean fromCache)
     {
         mContent = content;
         mFromCache = fromCache;

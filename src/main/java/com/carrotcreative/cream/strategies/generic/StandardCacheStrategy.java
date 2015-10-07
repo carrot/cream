@@ -9,7 +9,7 @@ import com.carrotcreative.cream.util.InternetStatus;
 
 import java.io.Serializable;
 
-public abstract class StandardCacheStrategy<T extends LoaderParams> implements CacheStrategy<T> {
+public abstract class StandardCacheStrategy<T extends LoaderParams, C extends Serializable> implements CacheStrategy<T, C> {
 
     private Context mContext;
 
@@ -35,7 +35,7 @@ public abstract class StandardCacheStrategy<T extends LoaderParams> implements C
     }
 
     @Override
-    public void handleSourceSuccess(T identifier, Serializable object, SingleLoader<T> singleLoader, SingleLoaderCallback singleLoaderCallback)
+    public void handleSourceSuccess(T identifier, C object, SingleLoader<T, C> singleLoader, SingleLoaderCallback<C> singleLoaderCallback)
     {
         singleLoader.writeContent(identifier, object);
         singleLoaderCallback.success(object, false); // False, not from cache
@@ -43,7 +43,7 @@ public abstract class StandardCacheStrategy<T extends LoaderParams> implements C
     }
 
     @Override
-    public void handleSourceFailure(T identifier, Exception error, SingleLoader<T> singleLoader, SingleLoaderCallback singleLoaderCallback)
+    public void handleSourceFailure(T identifier, Exception error, SingleLoader<T, C> singleLoader, SingleLoaderCallback<C> singleLoaderCallback)
     {
         if(singleLoader.shouldCache(identifier))
             singleLoader.loadFromCache(identifier, false, singleLoaderCallback);
