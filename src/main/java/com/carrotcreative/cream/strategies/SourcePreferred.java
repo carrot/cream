@@ -24,14 +24,14 @@ import java.io.Serializable;
  *     else
  *          ->Hit the cache with no regard to expiration
  */
-public class SourcePreferred<T extends LoaderParams, C extends Serializable> extends StandardCacheStrategy<T, C> {
+public class SourcePreferred<Identifier extends LoaderParams, Content extends Serializable> extends StandardCacheStrategy<Identifier, Content> {
 
     public SourcePreferred(Context context) {
         super(context);
     }
 
     @Override
-    public void handleInitialLoad(T identifier, boolean shouldCache, CacheStrategyCallback callback)
+    public void handleInitialLoad(Identifier identifier, boolean shouldCache, CacheStrategyCallback callback)
     {
         callback.handleFromAPI();
     }

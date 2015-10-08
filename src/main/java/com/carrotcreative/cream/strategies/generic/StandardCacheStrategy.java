@@ -9,7 +9,7 @@ import com.carrotcreative.cream.util.InternetStatus;
 
 import java.io.Serializable;
 
-public abstract class StandardCacheStrategy<T extends LoaderParams, C extends Serializable> implements CacheStrategy<T, C> {
+public abstract class StandardCacheStrategy<Identifier extends LoaderParams, Content extends Serializable> implements CacheStrategy<Identifier, Content> {
 
     private Context mContext;
 
@@ -19,7 +19,7 @@ public abstract class StandardCacheStrategy<T extends LoaderParams, C extends Se
     }
 
     @Override
-    public void handleCacheFailure(T identifier, boolean hasExpirationRegard, Exception error, CacheStrategyCallback callback)
+    public void handleCacheFailure(Identifier identifier, boolean hasExpirationRegard, Exception error, CacheStrategyCallback callback)
     {
         if (hasExpirationRegard)
         {
@@ -35,7 +35,7 @@ public abstract class StandardCacheStrategy<T extends LoaderParams, C extends Se
     }
 
     @Override
-    public void handleSourceSuccess(T identifier, C object, SingleLoader<T, C> singleLoader, SingleLoaderCallback<C> singleLoaderCallback)
+    public void handleSourceSuccess(Identifier identifier, Content object, SingleLoader<Identifier, Content> singleLoader, SingleLoaderCallback<Content> singleLoaderCallback)
     {
         singleLoader.writeContent(identifier, object);
         singleLoaderCallback.success(object, false); // False, not from cache
@@ -43,7 +43,7 @@ public abstract class StandardCacheStrategy<T extends LoaderParams, C extends Se
     }
 
     @Override
-    public void handleSourceFailure(T identifier, Exception error, SingleLoader<T, C> singleLoader, SingleLoaderCallback<C> singleLoaderCallback)
+    public void handleSourceFailure(Identifier identifier, Exception error, SingleLoader<Identifier, Content> singleLoader, SingleLoaderCallback<Content> singleLoaderCallback)
     {
         if(singleLoader.shouldCache(identifier))
             singleLoader.loadFromCache(identifier, false, singleLoaderCallback);
