@@ -63,9 +63,9 @@ public class GithubUserLoaderParams implements LoaderParams
 Single loaders are the bread and butter of CREAM.  They're used directly to make a single cached external call, and are very simply passed into RetryLoaders and MultipleLoaders to get them up and running really quickly.
 
 ```java
-public class GithubUserLoader extends SingleLoader<GithubUserLoaderParams> {
+public class GithubUserLoader extends SingleLoader<GithubUserLoaderParams, GithubUser> {
 
-    public GithubUserLoader(Context context, CacheStrategy<GithubUserLoaderParams> cacheStrategy) {
+    public GithubUserLoader(Context context, CacheStrategy<GithubUserLoaderParams, GithubUser> cacheStrategy) {
         super(context, cacheStrategy);
     }
 
@@ -128,7 +128,7 @@ public class GithubUserLoader extends SingleLoader<GithubUserLoaderParams> {
     @Override
     protected void loadFromSource(final GithubUserLoaderParams param, final SingleLoaderCallback singleLoaderCallback) {
 
-        final SingleLoader<GithubUserLoaderParams> thisLoader = this;
+        final SingleLoader<GithubUserLoaderParams, GithubUser> thisLoader = this;
 
         GithubAPIBuilder.getAPI().getUser(param.getUserId(), new Callback<GithubUser>() {
             @Override
@@ -153,9 +153,9 @@ Most of your API calls are probably going to have more than one parameter.  You'
 In the LoaderParams object, you'll need to implement the getIdentifier() method in a manner that uniquely identifies the API call.
 
 ```java
-public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoParams>{
+public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoParams, GithubRepo>{
 
-    public GithubRepoLoader(Context context, CacheStrategy<GithubRepoLoader.RepoParams> cacheStrategy) {
+    public GithubRepoLoader(Context context, CacheStrategy<RepoParams, GithubRepo> cacheStrategy) {
         super(context, cacheStrategy);
     }
 
@@ -165,18 +165,18 @@ public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoParams>
     }
 
     @Override
-    protected void loadFromSource(final GithubRepoLoader.RepoParams repoParam, final SingleLoaderCallback cb){
+    protected void loadFromSource(final RepoParams repoParams, final SingleLoaderCallback cb){
         final GithubRepoLoader thisLoader = this;
 
-        GithubAPIBuilder.getAPI().getRepo(repoParam.owner, repoParam.name, new Callback<GithubRepo>() {
+        GithubAPIBuilder.getAPI().getRepo(repoParams.owner, repoParams.name, new Callback<GithubRepo>() {
             @Override
             public void success(GithubRepo githubRepo, Response response) {
-                mCacheStrategy.handleSourceSuccess(repoParam, githubRepo, thisLoader, cb);
+                mCacheStrategy.handleSourceSuccess(repoParams, githubRepo, thisLoader, cb);
             }
 
             @Override
             public void failure(RetrofitError error) {
-                mCacheStrategy.handleSourceFailure(repoParam, error, thisLoader, cb);
+                mCacheStrategy.handleSourceFailure(repoParams, error, thisLoader, cb);
             }
         });
     }
@@ -204,18 +204,18 @@ public class GithubRepoLoader extends DefaultLoader<GithubRepoLoader.RepoParams>
 ###SingleLoader - Usage
 
 ```java
+// Getting the userName from the field
 String userName = "BrandonRomano";
 
 //Creating a StandardCacheStrategy object to plug into the Loader
-CacheStrategy<GithubUserLoaderParams> cacheStrategy = new CachePreferred<GithubUserLoaderParams>(this);
+CacheStrategy<GithubUserLoaderParams, GithubUser> cacheStrategy = new CachePreferred<GithubUserLoaderParams, GithubUser>(this);
 
 // Creating the loader + calling loadSelf
 GithubUserLoader loader = new GithubUserLoader(this, cacheStrategy);
-loader.loadSelf(new GithubUserLoaderParams(userName), new SingleLoaderCallback() {
+loader.loadSelf(new GithubUserLoaderParams(userName), new SingleLoaderCallback<GithubUser>() {
     @Override
-    public void success(Serializable serializable, boolean fromCache) {
+    public void success(GithubUser user, boolean fromCache) {
         // Success!  We have the user here, do whatever you please to them.
-        GithubUser user = (GithubUser) serializable;
     }
 
     @Override
@@ -239,18 +239,18 @@ paramsList.add( new GithubUserLoaderParams("BrandonRomano");
 paramsList.add( new GithubUserLoaderParams("roideuniverse");
 
 //Creating a StandardCacheStrategy object to plug into the Loader
-CacheStrategy<GithubUserLoaderParams> cacheStrategy = new CachePreferred<GithubUserLoaderParams>(this);
+CacheStrategy<GithubUserLoaderParams, GithubUser> cacheStrategy = new CachePreferred<GithubUserLoaderParams, GithubUser>(this);
 
 // Creating the single loader
 final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheStrategy);
 
 // Creating a multiple loader with a STRICT_POLICY (all successful or loader will fail)
-MultipleLoader<GithubUserLoaderParams> multipleLoader = new MultipleLoader<GithubUserLoaderParams>(MultipleLoader.STRICT_POLICY);
+MultipleLoader<GithubUserLoaderParams, GithubUser> multipleLoader = new MultipleLoader<GithubUserLoaderParams, GithubUser>(MultipleLoader.STRICT_POLICY);
 
 // Load!
 multipleLoader.load(paramsList, singleLoader, new MultipleLoaderCallback() {
     @Override
-    public void success(ArrayList<MultipleLoaderTuple> loaderTuples) {
+    public void success(ArrayList<MultipleLoaderTuple<GithubUser>> loaderTuples) {
         //TODO handle success, serializable objects are packed into the tuples
     }
 
@@ -273,7 +273,7 @@ Retry Loaders are useful as mobile internet is notorious for being unstable.  Re
 
 ```java
 // Creating a CachePreferred object to plug into the Loader
-CacheStrategy<GithubUserLoaderParams> cacheStrategy = new CachePreferred<GithubUserLoaderParams>(this);
+CacheStrategy<GithubUserLoaderParams, GithubUser> cacheStrategy = new CachePreferred<GithubUserLoaderParams, GithubUser>(this);
 
 // Creating the loader
 final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheStrategy);
@@ -282,14 +282,13 @@ final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheSt
 GithubUserLoaderParams params = new GithubUserLoaderParams("BrandonRomano");
 
 // Creating a retry loader
-final RetrySingleLoader<GithubUserLoaderParams> retrySingleLoader = new RetrySingleLoader<GithubUserLoaderParams>(singleLoader);
+final RetrySingleLoader<GithubUserLoaderParams, GithubUser> retrySingleLoader = new RetrySingleLoader<GithubUserLoaderParams, GithubUser>(singleLoader);
 
 // Load!
-retrySingleLoader.loadSelf(params, new RetrySingleLoaderCallback() {
+retrySingleLoader.loadSelf(params, new RetrySingleLoaderCallback<GithubUser>() {
     @Override
-    public void success(Serializable serializable, boolean fromCache) {
+    public void success(GithubUser user, boolean fromCache) {
         // Success!  We have the user here, do whatever you please to them.
-        GithubUser user = (GithubUser) serializable;
     }
 
     @Override
@@ -324,21 +323,21 @@ paramsList.add( new GithubUserLoaderParams("BrandonRomano");
 paramsList.add( new GithubUserLoaderParams("roideuniverse");
 
 // Creating a CachePreferred object to plug into the Loader
-CacheStrategy<GithubUserLoaderParams> cacheStrategy = new CachePreferred<GithubUserLoaderParams>(getContext());
+CacheStrategy<GithubUserLoaderParams, GithubUser> cacheStrategy = new CachePreferred<GithubUserLoaderParams, GithubUser>(getContext());
 
 // Creating the loader
 final GithubUserLoader singleLoader = new GithubUserLoader(getContext(), cacheStrategy);
 
 // Creating a multiple loader with a STRICT_POLICY
-final MultipleLoader<GithubUserLoaderParams> multipleLoader = new MultipleLoader<GithubUserLoaderParams>(MultipleLoader.STRICT_POLICY);
+final MultipleLoader<GithubUserLoaderParams, GithubUser> multipleLoader = new MultipleLoader<GithubUserLoaderParams, GithubUser>(MultipleLoader.STRICT_POLICY);
 
 // Creating a retryMultipleLoader
-final RetryMultipleLoader<GithubUserLoaderParams> retryMultipleLoader = new RetryMultipleLoader<GithubUserLoaderParams>(multipleLoader, singleLoader);
+final RetryMultipleLoader<GithubUserLoaderParams, GithubUser> retryMultipleLoader = new RetryMultipleLoader<GithubUserLoaderParams, GithubUser>(multipleLoader, singleLoader);
 
 // Load!
 retryMultipleLoader.loadSelf(paramsList, new RetryMultipleLoaderCallback() {
     @Override
-    public void success(ArrayList<MultipleLoaderTuple> loaderTuples) {
+    public void success(ArrayList<MultipleLoaderTuple<GithubUser>> loaderTuples) {
         // Serializable objects packed into the loaderTuples
     }
 
