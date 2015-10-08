@@ -1,22 +1,23 @@
 package com.carrotcreative.cream.loaders.retry.multiple;
 
 import com.carrotcreative.cream.loaders.multiple.MultipleLoaderCallback;
-import com.carrotcreative.cream.loaders.multiple.MultipleLoaderTuple;
 import com.carrotcreative.cream.loaders.multiple.MultipleLoader;
+import com.carrotcreative.cream.loaders.multiple.MultipleLoaderTuple;
 import com.carrotcreative.cream.loaders.retry.RetryLoader;
 import com.carrotcreative.cream.params.LoaderParams;
 import com.carrotcreative.cream.loaders.single.SingleLoader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class RetryMultipleLoader<Params extends LoaderParams> extends RetryLoader implements MultipleLoaderCallback {
+public class RetryMultipleLoader<Params extends LoaderParams, Content extends Serializable> extends RetryLoader implements MultipleLoaderCallback<Content> {
 
     private RetryMultipleLoaderCallback mRetryMultipleLoaderCallback;
-    private final MultipleLoader<Params> mMultiLoader;
-    private final SingleLoader<Params> mSingleLoader;
+    private final MultipleLoader<Params, Content> mMultiLoader;
+    private final SingleLoader<Params, Content> mSingleLoader;
     private ArrayList<Params> mParamsList;
 
-    public RetryMultipleLoader(MultipleLoader<Params> multiLoader, SingleLoader<Params> singleLoader)
+    public RetryMultipleLoader(MultipleLoader<Params, Content> multiLoader, SingleLoader<Params, Content> singleLoader)
     {
         super();
         mMultiLoader = multiLoader;
@@ -31,7 +32,7 @@ public class RetryMultipleLoader<Params extends LoaderParams> extends RetryLoade
     }
 
     @Override
-    public void success(ArrayList<MultipleLoaderTuple> content) {
+    public void success(ArrayList<MultipleLoaderTuple<Content>> content) {
         mRetryMultipleLoaderCallback.success(content);
     }
 

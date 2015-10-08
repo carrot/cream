@@ -6,6 +6,8 @@ import com.carrotcreative.cream.params.LoaderParams;
 import com.carrotcreative.cream.strategies.generic.CacheStrategyCallback;
 import com.carrotcreative.cream.strategies.generic.StandardCacheStrategy;
 
+import java.io.Serializable;
+
 /**
  * ===== Cache Preferred Strategy =====
  *
@@ -25,14 +27,14 @@ import com.carrotcreative.cream.strategies.generic.StandardCacheStrategy;
  *     else
  *          ->Hit the cache with no regard to expiration
  */
-public class CachePreferred<T extends LoaderParams> extends StandardCacheStrategy<T> {
+public class CachePreferred<Identifier extends LoaderParams, Content extends Serializable> extends StandardCacheStrategy<Identifier, Content> {
 
     public CachePreferred(Context context) {
         super(context);
     }
 
     @Override
-    public void handleInitialLoad(T identifier, boolean shouldCache, CacheStrategyCallback callback)
+    public void handleInitialLoad(Identifier identifier, boolean shouldCache, CacheStrategyCallback callback)
     {
         if(shouldCache)
         {

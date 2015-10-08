@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MultipleLoader<Params extends LoaderParams> {
+public class MultipleLoader<Params extends LoaderParams, Content extends Serializable> {
 
     /** This policy requires everything to be downloaded, or else it fails */
     public static final int STRICT_POLICY = 1;
@@ -19,7 +19,7 @@ public class MultipleLoader<Params extends LoaderParams> {
 
     //===================================
 
-    private ArrayList<MultipleLoaderTuple> mLoaderTuples;
+    private ArrayList<MultipleLoaderTuple<Content>> mLoaderTuples;
     private AtomicInteger mFinishedCounter;
     private final int mDownloadPolicy;
     private int mTotalToLoad;
@@ -29,19 +29,19 @@ public class MultipleLoader<Params extends LoaderParams> {
         mDownloadPolicy = downloadPolicy;
     }
 
-    public void load(final ArrayList<Params> paramsList, SingleLoader<Params> loader, final MultipleLoaderCallback multipleCallback) {
-        mLoaderTuples = new ArrayList<MultipleLoaderTuple>();
+    public void load(final ArrayList<Params> paramsList, SingleLoader<Params, Content> loader, final MultipleLoaderCallback<Content> multipleCallback) {
+        mLoaderTuples = new ArrayList<MultipleLoaderTuple<Content>>();
         mFinishedCounter = new AtomicInteger(0);
         mTotalToLoad = paramsList.size();
 
         for (final Params param : paramsList) {
-            loader.loadSelf(param, new SingleLoaderCallback() {
+            loader.loadSelf(param, new SingleLoaderCallback<Content>() {
 
                 @Override
-                public void success(Serializable content, boolean fromCache) {
+                public void success(Content content, boolean fromCache) {
                     //Adding to our loaderTuples
-                    MultipleLoaderTuple tuple = new MultipleLoaderTuple(content, fromCache);
-                    mLoaderTuples.add(tuple);
+                    MultipleLoaderTuple<Content> loaderTuple = new MultipleLoaderTuple<Content>(content, fromCache);
+                    mLoaderTuples.add(loaderTuple);
                     checkFinished(multipleCallback);
                 }
 

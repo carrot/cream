@@ -7,13 +7,13 @@ import com.carrotcreative.cream.loaders.single.SingleLoaderCallback;
 
 import java.io.Serializable;
 
-public class RetrySingleLoader<Params extends LoaderParams> extends RetryLoader implements SingleLoaderCallback {
+public class RetrySingleLoader<Params extends LoaderParams, Content extends Serializable> extends RetryLoader implements SingleLoaderCallback<Content> {
 
     private RetrySingleLoaderCallback mRetrySingleLoaderCallback;
-    private final SingleLoader<Params> mLoader;
+    private final SingleLoader<Params, Content> mLoader;
     private Params mParams;
 
-    public RetrySingleLoader(SingleLoader<Params> loader)
+    public RetrySingleLoader(SingleLoader<Params, Content> loader)
     {
         super();
         mLoader = loader;
@@ -32,7 +32,7 @@ public class RetrySingleLoader<Params extends LoaderParams> extends RetryLoader 
     }
 
     @Override
-    public void success(Serializable content, boolean fromCache) {
+    public void success(Content content, boolean fromCache) {
         mRetrySingleLoaderCallback.success(content, fromCache);
     }
 
